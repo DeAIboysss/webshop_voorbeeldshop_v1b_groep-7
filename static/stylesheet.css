@@ -1,0 +1,242 @@
+/* ..:: Font Rules for Latin and Latin Extended :: ..*/
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Roboto'), local('Roboto-Regular'), url(./robotolatin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Roboto'), local('Roboto-Regular'), url(./robotolatinext.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ..:: General Content Styling and Classes ::.. */
+
+body {
+	font-family:'Roboto',sans-serif;
+	text-align:center;
+}
+
+body, a:link, a:visited, a:hover, a:active {
+	color:#272727;
+	text-decoration:none;
+}
+
+.centerstage {
+	width:800px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.textright {
+	text-align:right;
+}
+
+.textwhiteshadow,  .textwhiteshadow a:link, .textwhiteshadow a:visited, .textwhiteshadow a:hover, .textwhiteshadow a:active{
+	color:white;
+	text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+}
+
+a.button{
+	display:inline-block;
+	padding:0.3em 1.2em;
+	margin:0 0.1em 0.1em 0;
+	border:0.16em solid rgba(255,255,255,0);
+	border-radius:2em;
+	box-sizing: border-box;
+	text-decoration:none;
+	font-family:'Roboto',sans-serif;
+	font-weight:300;
+	color:#FFFFFF;
+	text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+	text-align:center;
+}
+
+a.button.small{
+	padding:0.15em 0.6em;
+}
+
+a.button:hover{
+	border-color: rgba(255,255,255,1);
+}
+
+@media all and (max-width:30em){
+	a.button{
+		display:block;
+		margin:0.2em auto;
+	}
+}
+
+.hured { background-color:#e6331c; }
+.huredborder { border:1px solid #e6331c; }
+.hublue { background-color:#0092d2; }
+.hublueborder { border:1px solid #0092d2; }
+.hublueborderbottom { border-bottom:1px solid #0092d2; }
+.red{ background-color:#f14e4e; }
+.orange{ background-color:#f1bb4e; }
+.green{ background-color:#84f14e; }
+.aquamarine{ background-color:#4ef18f; }
+.blue{ background-color:#4e9af1; }
+.purple{ background-color:#9a4ef1; }
+.amaranth{ background-color:#e52b50; }
+
+/* ..:: Session Bar Styling ::.. */
+
+#sessionbarbackground {
+	padding:7px 0px;
+	color:white;
+	font-size:10pt;
+}
+
+/* ..:: Logo Bar Styling ::.. */
+
+#logobackground {
+	background-image:url('/static/menubackground.png');
+	height:100px;
+}
+
+.logosubbar {
+	float:right;
+	text-align:right;
+	height:28px;
+	margin-top:65px;
+	padding-top:7px;
+	background-color:white;
+	padding-left:5px;
+	padding-right:5px;
+	font-size:16px;
+	color:#a8a8a8;
+}
+
+#logosubbarleft {
+	background-image:url('/static/anglesectionback.png');
+	width:5px;
+}
+
+#logosubbarright {
+	background-image:url('/static/anglesectionforward.png');
+	width:5px;
+}
+
+.logosubbar a {
+	color:#a8a8a8;
+}
+
+#logo {
+	width:165px;
+	float:left;
+}
+
+/* ..:: Main Menu Styling ::.. */
+
+#menubarbackground {
+	background-color:white;
+	padding-top:7px;
+}
+
+#menubar {
+	padding-bottom:10px;
+}
+
+.menuitem, .submenuitem {
+	display:inline-block;
+	margin-left:3px;
+	margin-right:3px;
+	font-size:12px;
+	font-weight:bold;
+}
+
+#menudropdownbackground {
+	position:relative;
+}
+
+.menudropdown {
+	position: absolute; 
+	display: none;
+	width:100%;
+	background-color: #fafafa; 
+	z-index: 2; 
+	padding-top:7px;
+	padding-bottom:10px;
+}
+
+/* ..:: Content Block Styling ::.. */
+
+#content {
+	margin-top:50px;
+	margin-bottom:50px;
+}
+
+/* ..:: Product Object Styling ::.. */
+
+.productpageblock {
+	margin-left:9px;
+	margin-right:9px;
+	margin-bottom:10px;
+	width:130px;
+	height:130px;
+	display:block;
+	float:left;
+	font-size:12px;
+}
+
+.productname {
+	font-weight:bold;
+	font-size:12px;
+	margin-top:10px;
+	margin-bottom:3px;
+}
+
+.productprice {
+	font-weight:bold;
+	font-size:14px;
+	color:#e6331c;
+	margin-top:3px;
+	margin-bottom:3px;
+}
+
+.productdiscount {
+	margin-top:2px;
+	margin-bottom:2px;
+	color:white;
+}
+
+.productitemcount {
+	font-size:14px;
+	font-weight:bold;
+}
+
+/* ..:: Products Overview Styling ::.. */
+
+#products, #recommendedproducts {
+	text-align:center;
+	width:600px;
+	margin-left:auto;
+	margin-right:auto;
+	overflow:auto;
+}
+
+#productnavigation {
+	text-align:right;
+	margin-top:10px;
+	padding:5px;
+}
+
+/* ..:: Bottom Bar and Credits Styling ::.. */
+
+#bottombarbackground, #bottombar {
+	height:40px;
+}
+
+#credits {
+	font-size:10px;
+	color:#909090;
+}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block menu %}
+<span id="menuwrapper">
+	<div id="menubarbackground">
+		<div id="menubar">
+			{% for k, v in packet.categoryindex.items() %}
+				<div class="menuitem">	
+					<a href="/producten/{{ packet.categories_encode[k] }}">{{ k }}</a>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</span>
+{% endblock %}

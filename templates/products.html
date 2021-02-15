@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="products">
+{% for product in packet.products %}
+	<div class="productpageblock hublueborder">
+		<a href="/productdetail/{{ product.id }}">
+			<div class="productname">{{ product.name }}</div>
+			<div class="productprice">{{ product.price }}</div>
+			<div class="productdiscount hublue">{{ product.discount }}</div>
+		</a>
+		<a href="#" function="add-to-shopping-cart" class="productpage-addtocart button hured" productid="{{ product.id }}">In winkelmand</a>
+	</div>
+{% endfor %}
+</div>
+<div id="productnavigation" class="hublueborder">
+	{% if packet.prevpage %}
+		<a href="{{packet.prevpage}}">&lt;</a>&nbsp;|&nbsp;
+	{% endif %}
+	{{ packet.pstart }} - {{ packet.pend }} van {{packet.productcount}}
+	<select id="pagination-select">
+	{% for p in packet.paginationcounts %}
+		<option value="{{ p }}" {{ "selected=\"selected\"" if p == packet.items_per_page else "" }}>{{ p if p != 0 else "Alle" }}</option>
+	{% endfor %}
+	</select>
+	{% if packet.nextpage %}
+		&nbsp;|&nbsp;<a href="{{packet.nextpage}}">&gt;</a>
+	{% endif %}
+</div>
+{% endblock %}

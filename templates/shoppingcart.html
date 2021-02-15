@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+{% if packet.itemsincart %}
+<div id="products">
+	{% for product in packet.itemsincart %}
+	<div class="productpageblock hublueborder">
+		<a href="/productdetail/{{ product.id }}">
+			<div class="productname">{{ product.name }}</div>
+			<div class="productprice">{{ product.price }}</div>
+			<div class="productdiscount">{{ product.discount }}</div>
+			<div class="productitemcount">{{ product.itemcount }} x</div>
+		</a>
+	</div>
+	{% endfor %}
+</div>
+</div>
+{% else %}
+U heeft nog geen artikelen in uw winkelwagentje!
+{% endif %}
+{% endblock %}

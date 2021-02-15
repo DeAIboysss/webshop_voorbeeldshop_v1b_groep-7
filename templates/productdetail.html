@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ packet.product.name }}</h2>
+<p>{{ packet.product.description|safe }}</p>
+<h3>{{ packet.prepproduct.price }}</h3>
+<a href="#" function="add-to-shopping-cart" class="recommended-addtocart button hured" productid="{{ packet.product._id }}">In winkelmand</a>
+{% endblock %}
