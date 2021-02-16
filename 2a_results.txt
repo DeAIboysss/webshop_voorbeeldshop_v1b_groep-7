@@ -1,0 +1,3 @@
+name _Afleverkosten mini pallet price 0 --> Product where id = 1
+Rio Spiritus 1000 ml --> Name of fist product where name starts with "R"
+5.283502163100739 -->Average price
