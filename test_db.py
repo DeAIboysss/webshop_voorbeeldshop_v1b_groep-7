@@ -3,6 +3,7 @@ from pymongo import MongoClient
 client = MongoClient()
 database = client.huwebshop
 products = database.products.find()
+sessions = database.sessions.find
 #print(products[0]["name"],products[0]["price"]["selling_price"])
 
 # Wat is de naam en prijs van het eerste product in de database?
@@ -24,28 +25,55 @@ i = 0
 pr = 0
 count = 0
 total = 0
-while True:
-    try:
-        try:
-            pr = products[i]["price"]["selling_price"]
+# while True:
+#     try:
+#         try:
+#             pr = products[i]["price"]["selling_price"]
+#
+#             if type(pr) == int:
+#                 print(i)
+#                 total += pr
+#                 i += 1
+#                 count += 1
+#             else:
+#                 print(i)
+#                 i += 1
+#                 count += 1
+#                 total += int(pr*100)
+#
+#
+#         except KeyError:
+#             print(i)
+#             i+=1
+#
+#     except IndexError :
+#         print("list completed")
+#         print(f"gem prijs ={total/count} cent")
+#         break;
+print(sessions[0][''])
 
-            if type(pr) == int:
-                print(i)
-                total += pr
-                i += 1
-                count += 1
-            else:
-                print(i)
-                i += 1
-                count += 1
-                total += int(pr*100)
-
-
-        except KeyError:
-            print(i)
-            i+=1
-
-    except IndexError :
-        print("list completed")
-        print(f"gem prijs ={total/count} cent")
-        break;
+# while True:
+#     try:
+#         try:
+#             pr = sessions[i]["order"]
+#
+#             if type(pr) == int:
+#                 print(i)
+#                 total += pr
+#                 i += 1
+#                 count += 1
+#             else:
+#                 print(i)
+#                 i += 1
+#                 count += 1
+#                 total += int(pr*100)
+#
+#
+#         except KeyError:
+#             print(i)
+#             i+=1
+#
+#     except IndexError :
+#         print("list completed")
+#         print(f"gem prijs ={total/count} cent")
+#         break;
