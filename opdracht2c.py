@@ -4,13 +4,41 @@ import psycopg2
 
 
 
+def check_exsisting_table_element(table, element):
+    try:
+        postgreSQL_select_Query = f"select * from {table}"
+
+        cur.execute(postgreSQL_select_Query)
+        #print("Selecting rows from mobile table using cursor.fetchall")
+        table_records = cur.fetchall()
+        check_value_in_table = False
+        for row in table_records:
+            #print(row)
+            if element in row:
+                check_value_in_table = True
+
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error while fetching data from PostgreSQL", error)
+    if not check_value_in_table:
+
+        #print(f'{element} added')
+        cur.execute(f"INSERT INTO {table} VALUES {element, 0};")
+
+
+def Check_key_in_dict(Key,Dict):
+    if Key in Dict:
+        return Dict[Key]
+    else:
+        return None
+
 client = MongoClient()
 database = client.huwebshop
 
 db_products = database.products.find()
 con = psycopg2.connect(
     host="localhost",
-    database="postgres",
+    database="opdracht2",
     user="postgres",
     password="kip12345",
 )
@@ -21,103 +49,180 @@ cur = con.cursor()
 while True:
     # product table
     try:
+
         local_product = db_products[i]
+        #print(local_product)
         id = int(local_product['_id'])
         brand = local_product['brand']
         name = local_product['name']
         category = local_product['category']
         gender = local_product['gender']
-        discription = local_product['discription']
+        discription = str(local_product['description'])
+        #print(discription)
         sub_category = local_product['sub_category']
         sub_sub_category = local_product['sub_sub_category']
         color = local_product['color']
         fast_mover = local_product['fast_mover']
-        herhaalaankoop = local_product['herhaalaankoop']
-        product_size = local_product['product_size']
-        product_typename = local_product['product_typename']
+        herhaalaankoop = local_product['herhaalaankopen']
 
-        cur.execute(f"INSERT INTO product VALUES {id,name,brand,discription,gender,category,sub_category,sub_sub_category, color,fast_mover,herhaalaankoop,product_size,product_typename};")
-        con.commit()
-    except IndexError:
-        break
-    except ValueError:
-        pass
-    except KeyError:
-        pass
-    except psycopg2.Error:
-        pass
+        if '_preferences' in local_product:
+            for item in local_product['_preferences']:
+                if 'product_size' in item:
+                    product_size = item.split(':')
+                    cur.execute(f"INSERT INTO product_size VALUES {product_size[1], 0};")
+                if 'promos' in item:
+                    promos = item.split(':')
+                    cur.execute(f"INSERT INTO promos VALUES {promos[1], 0};")
+
+        else:
+            product_size = None
+
+        #print(category)
+        check_exsisting_table_element('category',category)
+        check_exsisting_table_element('sub_category',sub_category)
+        check_exsisting_table_element('sub_sub_category', sub_sub_category)
+        check_exsisting_table_element('brand', brand)
+        try:
+            postgreSQL_select_Query = f"select * from product"
+
+            cur.execute(postgreSQL_select_Query)
+            #print("Selecting rows from mobile table using cursor.fetchall")
+            table_records = cur.fetchall()
+            check_value_in_table = False
+            for row in table_records:
+                #print(row)
+                if id in row:
+                    check_value_in_table = True
+
+
+        except (Exception, psycopg2.Error) as error:
+            print("Error while fetching data from PostgreSQL", error)
+        if not check_value_in_table:
+            #print(f'{id} added')
+            sqlList = f"INSERT INTO product VALUES {id,name,brand,discription,gender,category,sub_category,sub_sub_category,color,fast_mover,herhaalaankoop,product_size}; "
+            sqlList = sqlList.replace("None", "NULL")
+            cur.execute(sqlList)
+
+
+
+        #con.commit()
+
+
 
 
     # price table
-    try:
-        selling_price = local_product['price']['selling_price']
-        cost_price = local_product['price']['cost_price']
-        deeplink = local_product['price']['deeplink']
-        price_discription = local_product['price']['description']
-        images = local_product['price']['description']
-        label = local_product['price']['label']
-        mrsp = local_product['price']['mrsp']
-        price_properties = local_product['price']['properties']
 
-        cur.execute(f"INSERT INTO price VALUES {id, cost_price, deeplink, price_discription, selling_price, images, label, mrsp, name, price_properties};")
-        con.commit()
-    except IndexError:
-        break
-    except ValueError:
-        pass
-    except KeyError:
-        pass
-    except psycopg2.Error:
-        pass
+        #print(local_product['price'])
+        selling_price = Check_key_in_dict('selling_price',local_product['price'])
+        cost_price = Check_key_in_dict('cost_price',local_product['price'])
+        deeplink = Check_key_in_dict('deeplink',local_product['price'])
+        price_discription = Check_key_in_dict('description',local_product['price'])
+        images = Check_key_in_dict('images',local_product['price'])
+        label = Check_key_in_dict('label',local_product['price'])
+        mrsp = Check_key_in_dict('mrsp',local_product['price'])
+        price_properties = Check_key_in_dict('properties',local_product['price'])
+
+        try:
+            postgreSQL_select_Query = f"select * from price"
+
+            cur.execute(postgreSQL_select_Query)
+            #print("Selecting rows from mobile table using cursor.fetchall")
+            table_records = cur.fetchall()
+            check_value_in_table = False
+            for row in table_records:
+                #print(row)
+                if id in row:
+                    check_value_in_table = True
 
 
-    # properties table
-    try:
+        except (Exception, psycopg2.Error) as error:
+            print("Error while fetching data from PostgreSQL", error)
+        if not check_value_in_table:
+            #print(f'{id} added')
+            sqlList = f"INSERT INTO price VALUES {id, cost_price, deeplink, price_discription, selling_price, images, label, mrsp, name, price_properties};"
+            sqlList = sqlList.replace("None", "NULL")
+            cur.execute(sqlList)
+
         properties = []
         for items in local_product['properties']:
             items.split(':')
             properties.append(items)
         for x in range(0,len(properties)):
-            cur.execute(f"INSERT INTO properties VALUES {id,properties[0],properties[1]}")
-        con.commit()
-    except IndexError:
-        break
-    except ValueError:
-        pass
-    except KeyError:
-        pass
-    except psycopg2.Error:
-        pass
+
+            try:
+                postgreSQL_select_Query = f"select * from properties"
+
+                cur.execute(postgreSQL_select_Query)
+                #print("Selecting rows from mobile table using cursor.fetchall")
+                table_records = cur.fetchall()
+                check_value_in_table = False
+                for row in table_records:
+                    #print(row)
+                    if id in row:
+                        check_value_in_table = True
 
 
-    # SM table
-    try:
-        is_active = local_product['sm']
-        last_updates = local_product['sm']
-        rivals_updated = local_product['sm']
-        sm_product_type = local_product['sm']
-
-        cur.execute(f"INSERT INTO sm_product VALUES {id,is_active,last_updates,rivals_updated,sm_product_type}")
-        con.commit()
-    except IndexError:
-        break
-    except ValueError:
-        pass
-    except KeyError:
-        pass
-    except psycopg2.Error:
-        pass
+            except (Exception, psycopg2.Error) as error:
+                print("Error while fetching data from PostgreSQL", error)
+            if not check_value_in_table:
+                #print(f'{id} added')
+                sqlList=f"INSERT INTO properties VALUES {id,properties[0],properties[1]}"
+                sqlList = sqlList.replace("None", "NULL")
+                cur.execute(sqlList)
 
 
-    # stock table
-    try:
-        stock_date = local_product['stock']
-        stock_level=local_product['stock_level']
-        for i in range(0,len(local_product['stock'])):
-            stock_date = local_product['stock'][i]
-            stock_level = local_product['stock_level'][i]
-            cur.execute(f"INSERT INTO stock VALUES {id,stock_date,stock_level}")
-            con.commit()
+        is_active = Check_key_in_dict('is_active',local_product['sm'])
+        last_updates = str(Check_key_in_dict('last_updated',local_product['sm']))
+
+        rivals_updated = Check_key_in_dict('rivals_updated',local_product['sm'])
+        sm_product_type = Check_key_in_dict('type',local_product['sm'])
+
+        try:
+            postgreSQL_select_Query = f"select * from sm_product"
+
+            cur.execute(postgreSQL_select_Query)
+            #print("Selecting rows from mobile table using cursor.fetchall")
+            table_records = cur.fetchall()
+            check_value_in_table = False
+            for row in table_records:
+                #print(row)
+                if id in row:
+                    check_value_in_table = True
+
+
+        except (Exception, psycopg2.Error) as error:
+            print("Error while fetching data from PostgreSQL", error)
+        if not check_value_in_table:
+            #print(f'{id} added')
+            sqlList=f"INSERT INTO sm_product VALUES {id,is_active,last_updates,rivals_updated,sm_product_type}"
+            sqlList = sqlList.replace("None", "NULL")
+            cur.execute(sqlList)
+
+        for item in local_product['stock']:
+            stock_date = item['date']
+            stock_level = item['stock_level']
+            try:
+                postgreSQL_select_Query = f"select * from stock"
+
+                cur.execute(postgreSQL_select_Query)
+                #print("Selecting rows from mobile table using cursor.fetchall")
+                table_records = cur.fetchall()
+                check_value_in_table = False
+                for row in table_records:
+                    #print(row)
+                    if id in row:
+                        check_value_in_table = True
+
+
+            except (Exception, psycopg2.Error) as error:
+                print("Error while fetching data from PostgreSQL", error)
+            if not check_value_in_table:
+                #print(f'{id} added')
+                sqlList=f"INSERT INTO stock VALUES {id,stock_date,stock_level}"
+                sqlList = sqlList.replace("None", "NULL")
+                cur.execute(sqlList)
+
+            #con.commit()
 
     except IndexError:
         break
@@ -128,7 +233,8 @@ while True:
     except psycopg2.Error:
         pass
     finally:
-        print(id,"succes")
+        print(i)
+        con.commit()
         i +=1
 
 
