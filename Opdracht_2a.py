@@ -51,3 +51,5 @@ except KeyError:
 print(f'The total price of all products in the database is: {price_total}')
 
 print(f'The mean price of all products in the database is: {price_total / j}.') #~528 cent
+
+
