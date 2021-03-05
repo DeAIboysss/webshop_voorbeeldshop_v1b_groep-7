@@ -1,11 +1,12 @@
 from pymongo import MongoClient
 import psycopg2
+import regex
 
-
+sql = ''
 
 
 def check_exsisting_table_element(table, element):
-    try:
+
         postgreSQL_select_Query = f"select * from {table}"
 
         cur.execute(postgreSQL_select_Query)
@@ -16,14 +17,10 @@ def check_exsisting_table_element(table, element):
             #print(row)
             if element in row:
                 check_value_in_table = True
+        if not check_value_in_table:
 
-
-    except (Exception, psycopg2.Error) as error:
-        print("Error while fetching data from PostgreSQL", error)
-    if not check_value_in_table:
-
-        #print(f'{element} added')
-        cur.execute(f"INSERT INTO {table} VALUES {element, 0};")
+            #print(f'{element} added')
+            cur.execute(f"INSERT INTO {table} VALUES {element, 0};")
 
 
 def Check_key_in_dict(Key,Dict):
@@ -48,22 +45,40 @@ cur = con.cursor()
 
 while True:
     # product table
-    try:
+    #try:
 
         local_product = db_products[i]
         #print(local_product)
-        id = int(local_product['_id'])
-        brand = local_product['brand']
-        name = local_product['name']
-        category = local_product['category']
-        gender = local_product['gender']
+        id = (local_product['_id'])
+        if  id.isdigit():
+            id = int(id)
+        else:
+            #print(id)
+            id = id.split('-')
+            #print(id)
+            id = id[0]
+            #print(id)
+
+        brand = Check_key_in_dict('brand', local_product)
+        name = Check_key_in_dict('name', local_product)
+        if "\'" in name:
+            name = name.replace("\'", '')
+        elif "'" in name:
+            name = name.replace("'", "''")
+        category = Check_key_in_dict('category', local_product)
+        gender = Check_key_in_dict('gender', local_product)
         discription = str(local_product['description'])
-        #print(discription)
-        sub_category = local_product['sub_category']
-        sub_sub_category = local_product['sub_sub_category']
-        color = local_product['color']
-        fast_mover = local_product['fast_mover']
-        herhaalaankoop = local_product['herhaalaankopen']
+        if "\'" in discription:
+            discription = discription.replace("\'",'')
+        elif "'" in discription:
+            discription = discription.replace("'","''")
+
+
+        sub_category = Check_key_in_dict('sub_category',local_product)
+        sub_sub_category = Check_key_in_dict('sub_sub_category', local_product)
+        color = Check_key_in_dict('color', local_product)
+        fast_mover = Check_key_in_dict('fast_mover', local_product)
+        herhaalaankoop = Check_key_in_dict('herhaalaankoop', local_product)
 
         if '_preferences' in local_product:
             for item in local_product['_preferences']:
@@ -82,33 +97,26 @@ while True:
         check_exsisting_table_element('sub_category',sub_category)
         check_exsisting_table_element('sub_sub_category', sub_sub_category)
         check_exsisting_table_element('brand', brand)
-        try:
-            postgreSQL_select_Query = f"select * from product"
+        # try:
+        #     postgreSQL_select_Query = f"select * from product"
+        #
+        #     cur.execute(postgreSQL_select_Query)
+        #     #print("Selecting rows from mobile table using cursor.fetchall")
+        #     table_records = cur.fetchall()
+        #     check_value_in_table = False
+        #     for row in table_records:
+        #         #print(row)
+        #         if id in row:
+        #             check_value_in_table = True
 
-            cur.execute(postgreSQL_select_Query)
-            #print("Selecting rows from mobile table using cursor.fetchall")
-            table_records = cur.fetchall()
-            check_value_in_table = False
-            for row in table_records:
-                #print(row)
-                if id in row:
-                    check_value_in_table = True
 
-
-        except (Exception, psycopg2.Error) as error:
-            print("Error while fetching data from PostgreSQL", error)
-        if not check_value_in_table:
+        # except (Exception, psycopg2.Error) as error:
+        #     print("Error while fetching data from PostgreSQL", error)
+        #if not check_value_in_table:
             #print(f'{id} added')
-            sqlList = f"INSERT INTO product VALUES {id,name,brand,discription,gender,category,sub_category,sub_sub_category,color,fast_mover,herhaalaankoop,product_size}; "
-            sqlList = sqlList.replace("None", "NULL")
-            cur.execute(sqlList)
-
-
-
-        #con.commit()
-
-
-
+        sqlList = f"INSERT INTO product VALUES {id,name,brand,discription,gender,category,sub_category,sub_sub_category,color,fast_mover,herhaalaankoop,product_size}; "
+        sqlList = sqlList.replace("None", "NULL")
+        cur.execute(sqlList)
 
     # price table
 
@@ -142,6 +150,8 @@ while True:
             sqlList = f"INSERT INTO price VALUES {id, cost_price, deeplink, price_discription, selling_price, images, label, mrsp, name, price_properties};"
             sqlList = sqlList.replace("None", "NULL")
             cur.execute(sqlList)
+
+
 
         properties = []
         for items in local_product['properties']:
@@ -198,6 +208,7 @@ while True:
             sqlList = sqlList.replace("None", "NULL")
             cur.execute(sqlList)
 
+
         for item in local_product['stock']:
             stock_date = item['date']
             stock_level = item['stock_level']
@@ -224,18 +235,20 @@ while True:
 
             #con.commit()
 
-    except IndexError:
-        break
-    except ValueError:
-        pass
-    except KeyError:
-        pass
-    except psycopg2.Error:
-        pass
-    finally:
-        print(i)
-        con.commit()
+    # except IndexError:
+    #     break
+    #
+    # except ValueError:
+    #     pass
+    # except KeyError:
+    #     pass
+    # except psycopg2.Error:
+    #     pass
+    # finally:
+        if i % 250 == 0:
+            print(i)
         i +=1
+        con.commit()
 
 
 cur.close()
