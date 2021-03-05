@@ -26,7 +26,7 @@ def check_if_column_exists(column, sessions):
     return None
 
 
-while True and i < 1000:
+while True and i < 100000:
     try:
         #sessions table:
         local_sessions = db_sessions[i]
@@ -50,7 +50,18 @@ while True and i < 1000:
             sql_event = f"INSERT INTO events VALUES {id, t, source, action, check_if_column_exists('pagetype', event), check_if_column_exists('product', event), check_if_column_exists('time_on_page', event), check_if_column_exists('max_time_inactive', event), check_if_column_exists('click_count', event), check_if_column_exists('elements_clicked', event), check_if_column_exists('scrolls_down', event), check_if_column_exists('scrolls_up', event)};"
             sql_event = sql_event.replace("None", "NULL")
             cur.execute(sql_event)
-            check_if_column_exists('action', local_sessions)
+
+        #sources tables:                                # <= NOTE: id is int8 and not SERIAL for the time being. also deleted FK in DDL.
+        if 'sources' in local_sessions:
+            if len(local_sessions['sources']) > 0:
+
+                for source in local_sessions['sources']:
+                    # print(source)
+                    # t = str(source['t'])
+
+                    sql_sources = f"INSERT INTO sources VALUES {None, check_if_column_exists('full_url', source), check_if_column_exists('netloc', source), None, t};"
+                    sql_sources = sql_sources.replace("None", "NULL")
+                    cur.execute(sql_sources)
 
 
     except IndexError:
@@ -59,12 +70,12 @@ while True and i < 1000:
     except ValueError:
         print('ValueError')
         pass
-    except KeyError:
-        print('KeyError')
-        pass
-    except psycopg2.Error:
-        print('psycopg2.Error')
-        pass
+    # except KeyError:
+    #     print('KeyError')
+    #     pass
+    # except psycopg2.Error:
+    #     print('psycopg2.Error')
+    #     pass
     finally:
         #print(id,"succes")
         print("succes")
