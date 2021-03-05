@@ -1,6 +1,111 @@
 from pymongo import MongoClient
 import psycopg2
 
+
+def WriteToPostgreSQL(itemindex,increment):
+
+    i = itemindex
+
+
+    while True  and i <(itemindex+increment):
+        try:
+
+            local_profile = db_profiles[i]
+
+
+            #profiles table
+            profile_id = str(local_profile["_id"])
+
+            if 'meta' in local_profile:
+                has_utm_hash = local_profile["meta"]["has_utm_hash"]
+                has_device = local_profile["meta"]["has_device"]
+                has_email = local_profile["meta"]["has_email"]
+                random = local_profile["meta"]["random"]
+            else:
+                has_utm_hash = None
+                has_device = None
+                has_email = None
+                random = None
+
+            if 'sm' in local_profile:
+                created = str(local_profile["sm"]["created"])
+                created_by = local_profile["sm"]["created_by"]
+            else:
+                created = None
+                created_by = None
+
+            if 'order' in local_profile:
+                if 'latest' in local_profile["order"]:
+                    latest = str(local_profile["order"]["latest"])
+                else:
+                    latest = None
+                if 'count' in local_profile["order"]:
+                    count = local_profile["order"]["count"]
+                else:
+                    count = None
+                if 'first' in local_profile["order"]:
+                    first = str(local_profile["order"]["first"])
+                else:
+                    first = None
+            else:
+                latest = None
+                count = None
+                first = None
+
+            if 'recommendations' in local_profile:
+                latest_activity = str(local_profile["recommendations"]["timestamp"])
+                timestamp = str(local_profile["recommendations"]["timestamp"])
+                segment = local_profile["recommendations"]["segment"]
+                latest_visit = str(local_profile["recommendations"]["latest_visit"])
+                total_viewed_count = local_profile["recommendations"]["total_pageview_count"]
+                total_pageview_count = local_profile["recommendations"]["total_viewed_count"]
+            else:
+                latest_activity = None
+                timestamp = None
+                segment = None
+                latest_visit = None
+                total_viewed_count = None
+                total_pageview_count = None
+
+
+            cur.execute((f"INSERT INTO profile VALUES {profile_id,latest_activity,has_utm_hash,has_device,has_email,random,created,created_by,latest,count,first,timestamp,segment,latest_visit,total_viewed_count,total_pageview_count};").replace("None", "NULL"))
+
+
+
+            #cur.execute(f"INSERT INTO profile VALUES ('a',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);")
+
+
+
+
+
+            #print(local_profile["sm"]["created"])
+
+
+
+
+
+
+        except IndexError:
+            break
+        # except ValueError:
+        #     print('Value error')
+        except KeyError as ke:
+            print(str(ke))
+            #pass
+
+
+        except psycopg2.Error as pe:
+             print(pe)
+             #print(profile_id)
+        finally:
+            #print(id,"succes")
+
+            con.commit()
+            i +=1
+
+
+
+
 client = MongoClient()
 database = client.huwebshop
 
@@ -13,80 +118,13 @@ con = psycopg2.connect(
     user="postgres",
     password="Vicecity_007",
 )
-i = 0
 cur = con.cursor()
+for i in range(220059,2082649,100):
 
-while True :
-    try:
-
-        local_profile = db_profiles[i]
-
-
-        #profiles table
-        profile_id = str(local_profile["_id"])
-        latest_activity = str(local_profile["recommendations"]["timestamp"])
-        has_utm_hash = local_profile["meta"]["has_utm_hash"]
-        has_device = local_profile["meta"]["has_device"]
-        has_email = local_profile["meta"]["has_email"]
-        random = local_profile["meta"]["random"]
-        created = str(local_profile["sm"]["created"])
-        created_by = local_profile["sm"]["created_by"]
-        latest = str(local_profile["order"]["latest"])
-        count = local_profile["order"]["count"]
-        first = str(local_profile["order"]["first"])
-        timestamp = str(local_profile["recommendations"]["timestamp"])
-        segment = local_profile["recommendations"]["segment"]
-        #viewed_before = local_profile["recommendations"]["viewed_before"]
-        #similars = local_profile["recommendations"]["similars"]
-        latest_visit = str(local_profile["recommendations"]["latest_visit"])
-        total_viewed_count = local_profile["recommendations"]["total_pageview_count"]
-        total_pageview_count = local_profile["recommendations"]["total_viewed_count"]
-
-
-        #(profile_id,latest_activity,has_utm_hash,has_utm_hash,has_email,random,created,created_by,latest,_count,_first,_timestamp,segment,viewed_before,similars,latest_visit,total_viewed_count,total_pageview_count)
-
-        cur.execute(f"INSERT INTO profile VALUES {profile_id,latest_activity,has_utm_hash,has_device,has_email,random,created,created_by,latest,count,first,timestamp,segment,latest_visit,total_viewed_count,total_pageview_count};")
-        #cur.execute(f"INSERT INTO profile VALUES ('a',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);")
-
-
-
-
-
-        #print(local_profile["sm"]["created"])
-
-
-
-
-
-
-    except IndexError:
-        break
-    # except ValueError:
-    #     print('Value error')
-    except KeyError as ke:
-        try:
-            print(str(ke))
-
-            if str(ke) == str("'recommendations'"):
-                #print('this code is executed')
-                cur.execute(f"INSERT INTO profile VALUES {profile_id},NULL,{has_utm_hash},{has_device},{has_email},{random},{created},{created_by},{latest},{count},{first},NULL,NULL,NULL,NULL,NULL;")
-            #print(local_profile)
-        finally:
-            pass
-
-    except psycopg2.Error as pe:
-         print(pe)
-         print(profile_id)
-    finally:
-        #print(id,"succes")
-
-        con.commit()
-        i +=1
-
+    WriteToPostgreSQL(i,100)
 
 cur.close()
 con.close()
-
 # id = int(local_product['_id'])
 # brand = local_product['brand']
 #
