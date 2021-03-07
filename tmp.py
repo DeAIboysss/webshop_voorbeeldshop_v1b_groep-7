@@ -1,16 +1,24 @@
 from pymongo import MongoClient
 import psycopg2
+import datetime
 
 
-def WriteToPostgreSQL(itemindex,increment):
+def GetProfiledata():
 
-    i = itemindex
+    global time0
+    i = 0
+    biglist =[]
 
+    # time1 = datetime.datetime.now()
+    # lasttime = datetime.datetime.now() -datetime.datetime.now()
 
-    while True  and i <(itemindex+increment):
+    #while True  and i <itemindex:
+    for profile in database.profiles.find({},{"_id":1,"order":1,"recommendations":1}):
         try:
 
-            local_profile = db_profiles[i]
+            local_profile =profile # db_profiles[i]
+
+
 
 
             #profiles table
@@ -41,41 +49,23 @@ def WriteToPostgreSQL(itemindex,increment):
                 segment = None
 
 
-            cur.execute((f"INSERT INTO profile VALUES {profile_id,latest_activity,latest,count,segment};").replace("None", "NULL"))
+            biglist.append([profile_id,latest_activity,latest,count,segment])
 
+            if i % 10000 == 0 :
+                print(i)
+            #     if i != 0 and i != 1000:
+            #         print((time0 - time1) -lasttime)
+            #         lasttime =time0 - time1
+            #
+            #     time1 = time0
+            #     time0 = datetime.datetime.now()
 
-
-            #cur.execute(f"INSERT INTO profile VALUES ('a',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);")
-
-
-
-
-
-            #print(local_profile["sm"]["created"])
-
-
-
-
-
-
-        except IndexError:
-            break
-        # except ValueError:
-        #     print('Value error')
-        except KeyError as ke:
-            print(str(ke))
-            #pass
-
-
-        except psycopg2.Error as pe:
-            print(pe)
-            #print(profile_id)
-        finally:
-            #print(id,"succes")
-
-            con.commit()
             i +=1
+        except IndexError:
+            return biglist
 
+    print(datetime.datetime.now()-time0)
+    return biglist
 
 
 
@@ -83,18 +73,28 @@ client = MongoClient()
 database = client.huwebshop
 
 
-db_profiles = database.profiles.find()
+# iets doen met db_profiles
+
 
 con = psycopg2.connect(
     host="localhost",
-    database="huwebshop2",
+    database="huwebshop",
     user="postgres",
     password="Vicecity_007",
 )
 cur = con.cursor()
-for i in range(0,2082649,100):
 
-    WriteToPostgreSQL(i,100)
+time0 = datetime.datetime.now()
+profiles = GetProfiledata()
+#print(profiles)
 
+for p in profiles:
+
+    cur.execute((f"INSERT INTO profile VALUES {p[0],p[1],p[2],p[3],p[4]};").replace("None", "NULL"))
+
+
+#cur.executemany(("INSERT INTO profile VALUES (?,?,?,?,?);",profiles).replace("None", "NULL"))
+con.commit()
 cur.close()
 con.close()
+print(datetime.datetime.now()-time0)
