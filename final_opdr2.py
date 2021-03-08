@@ -9,7 +9,7 @@ database = client.huwebshop
 
 con = psycopg2.connect(
     host="localhost",
-    database="opdracht2",
+    database="opdracht2_final",
     user="postgres",
     password="kip12345",
 )
@@ -148,15 +148,15 @@ def GetProfiledata():
 
         if "previously_recommended" in local_profile:
             for product in local_profile["previously_recommended"]:
-                previously_recommended.append((product,profile_id))
+                previously_recommended.append((product, profile_id))
+        if "recommendations" in local_profile:
+            if "similars" in local_profile["recommendations"]:
+                for product in local_profile["recommendations"]["similars"]:
+                    similars.append((product, profile_id))
 
-        if "similars" in local_profile:
-            for product in local_profile["similars"]:
-                similars.append((product,profile_id))
-
-        if "viewed_before" in local_profile:
-            for product in local_profile["viewed_before"]:
-                viewed_before.append((product,profile_id))
+            if "viewed_before" in local_profile["recommendations"]:
+                for product in local_profile["recommendations"]["viewed_before"]:
+                    viewed_before.append((product, profile_id))
         i +=1
 
 
@@ -171,32 +171,31 @@ def get_sessions():
     order_sql = []
     events_sql = []
     for local_sessions in database.sessions.find({},{"_id":1,"session_start":1,"session_end":1,"has_sale":1,"segment":1,"events":1,"order":1}):
-        id = str(local_sessions['_id'])
-        session_start = str(local_sessions['session_start'])
-        session_end = str(local_sessions['session_end'])
-        has_sale = bool(local_sessions['has_sale'])
+        id = str(Check_key_in_dict('_id',local_sessions))
+        session_start = str(Check_key_in_dict('session_start',local_sessions))
+        session_end = str(Check_key_in_dict('session_end',local_sessions))
+        has_sale = bool(Check_key_in_dict('has_sale',local_sessions))
         session_sql.append((id, session_start, session_end, has_sale, Check_key_in_dict('segment', local_sessions)))
 
         # events table:
-        for event in local_sessions['events']:
-            t = str(event['t'])
-            source = event['source']
-            action = event['action']
-            events_sql.append((id, Check_key_in_dict('product', event), t, source, action,
-                               Check_key_in_dict('pagetype', event), Check_key_in_dict('time_on_page', event),
-                               Check_key_in_dict('click_count', event)))
+        if 'events' in local_sessions:
+            for event in local_sessions['events']:
+                t = str(event['t'])
+                source = event['source']
+                action = event['action']
+                events_sql.append((id, Check_key_in_dict('product', event), t, source, action,
+                                   Check_key_in_dict('pagetype', event), Check_key_in_dict('time_on_page', event),
+                                   Check_key_in_dict('click_count', event),Check_key_in_dict('elements_clicked',event)))
 
         # orders table:
         if 'order' in local_sessions and local_sessions['order'] != None:
             # print(f"order:\t{local_sessions['order']}")
             order = local_sessions['order']
-
-            for products, ids in order.items():
-                if ids != None:
-                    for prod in ids:
-                        for key, value in prod.items():
+            for product in order['products']:
+                if product != None and not isinstance(product, str):
+                        for key, value in product.items():
                             id_product = value
-                            order_sql.append((None, id_product, id))
+                            order_sql.append((id,id_product))
         # if i % 1000 ==0:
         #     print("sessions",i)
         # i+=1
@@ -208,18 +207,42 @@ def get_sessions():
 product_sql, prop_sql = get_product_data()
 profiles,previously_recommended,similars,viewed_before = GetProfiledata()
 sessions, events, orders = get_sessions()
-print(datetime.datetime.now() - time0)
 print("sql execute")
 cur.executemany("INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", product_sql)
-cur.executemany("INSERT INTO properties VALUES (%s,%s,%s);", prop_sql)
-cur.executemany("INSERT INTO profile VALUES (%s,%s,%s,%s,%s);",profiles)
-cur.executemany("INSERT INTO previously_recommended VALUES (%s,%s);",previously_recommended)
-cur.executemany("INSERT INTO similars VALUES (%s,%s);",similars)
-cur.executemany("INSERT INTO viewed_before VALUES (%s,%s);",viewed_before)
-cur.executemany("INSERT INTO sessions values(%s,%s,%s,%s,%s)", sessions)
-cur.executemany("INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s,)", events)
-cur.executemany("INSERT INTO orders values(%s,%s,%s)", orders)
 con.commit()
+print("insert Product done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO properties VALUES (%s,%s,%s);", prop_sql)
+con.commit()
+print("insert properties done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO profile VALUES (%s,%s,%s,%s,%s);",profiles)
+con.commit()
+print("insert profile done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO previously_recommended VALUES (%s,%s);",previously_recommended)
+con.commit()
+print("insert previously_recommended done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO similars VALUES (%s,%s);",similars)
+con.commit()
+print("insert similars done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO viewed_before VALUES (%s,%s);",viewed_before)
+con.commit()
+print("insert viewed_before done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO sessions values(%s,%s,%s,%s,%s)", sessions)
+con.commit()
+print("insert sessions done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s)", events)
+con.commit()
+print("insert events done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO orders values(%s,%s)", orders)
+con.commit()
+print("insert orders done",datetime.datetime.now() - time0)
 
 cur.close()
 con.close()
