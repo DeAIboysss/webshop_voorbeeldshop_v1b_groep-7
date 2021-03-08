@@ -12,9 +12,6 @@ def GetProfiledata():
     similars =[]
     viewed_before=[]
 
-    # time1 = datetime.datetime.now()
-    # lasttime = datetime.datetime.now() -datetime.datetime.now()
-
     #while True  and i <itemindex:
     for profile in database.profiles.find({},{"_id":1,"order":1,"recommendations":1,"previously_recommended":1,"similars":1,"viewed_before":1}):
 
@@ -50,23 +47,15 @@ def GetProfiledata():
         if "previously_recommended" in local_profile:
             for product in local_profile["previously_recommended"]:
                 previously_recommended.append((product,profile_id))
+        if "recommendations" in local_profile:
+            if "similars" in local_profile["recommendations"]:
+                for product in local_profile["recommendations"]["similars"]:
+                    similars.append((product,profile_id))
 
-        if "similars" in local_profile:
-            for product in local_profile["similars"]:
-                similars.append((product,profile_id))
+            if "viewed_before" in local_profile["recommendations"]:
+                for product in local_profile["recommendations"]["viewed_before"]:
+                    viewed_before.append((product,profile_id))
 
-        if "viewed_before" in local_profile:
-            for product in local_profile["viewed_before"]:
-                viewed_before.append((product,profile_id))
-
-        # if i % 10000 == 0 :
-        #     print(i)
-        #     if i != 0 and i != 1000:
-        #         print((time0 - time1) -lasttime)
-        #         lasttime =time0 - time1
-        #
-        #     time1 = time0
-        #     time0 = datetime.datetime.now()
 
         i +=1
 
@@ -84,7 +73,6 @@ def GetProfiledata():
 client = MongoClient()
 database = client.huwebshop
 
-# iets doen met db_profiles
 
 
 con = psycopg2.connect(
@@ -104,14 +92,6 @@ with open("message (12).txt","r") as ddl:
 con.commit()
 
 profiles,previously_recommended,similars,viewed_before = GetProfiledata()
-
-#print(profiles)
-
-# for p in profiles:
-#
-#     cur.execute((f"INSERT INTO profile VALUES {p[0],p[1],p[2],p[3],p[4]};").replace("None", "NULL"))
-
-
 
 
 cur.executemany("INSERT INTO profile VALUES (%s,%s,%s,%s,%s);",profiles)
