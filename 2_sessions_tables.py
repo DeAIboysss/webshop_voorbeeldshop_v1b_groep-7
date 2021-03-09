@@ -18,6 +18,11 @@ con = psycopg2.connect(
 i = 0
 cur = con.cursor()
 
+#empty strings for queries to fill:
+sql_sessions = []
+sql_events = []
+sql_orders = []
+
 
 def check_if_column_exists(column, sessions):
     if column == None:
@@ -82,7 +87,7 @@ while True and i < 1500:
     finally:
         # print(id,"succes")
         if i % 100 == 0:
-            print("succes") # <= print per 100 succesvolle lines, is sneller.
+            print("succes") # <= print every 100 succesvolle lines, is faster.
 
         con.commit()
         i += 1
