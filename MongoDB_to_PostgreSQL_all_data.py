@@ -8,9 +8,9 @@ database = client.huwebshop
 
 con = psycopg2.connect(
     host="localhost",
-    database="opdracht2",
+    database="huwebshop",
     user="postgres",
-    password="kip12345",
+    password="admin",
 )
 cur = con.cursor()
 def Check_key_in_dict(Key,Dict):
