@@ -26,8 +26,7 @@ def Check_key_in_dict(Key, Dict):
 def get_product_data():
     prop_sql = []
     product_sql = []
-    for local_product in database.products.find({}, {"_id": 1, 'properties': 1, "name": 1, "cost_price": 1,
-                                                     "selling_price": 1, "brand": 1, "is_active": 1,
+    for local_product in database.products.find({}, {"_id": 1, 'properties': 1, "name": 1, "price": 1, "brand": 1, "is_active": 1,
                                                      "sm_product_type": 1, "discription": 1, "gender": 1, "category": 1,
                                                      "sub_category": 1, "sub_sub_category": 1, "fast_mover": 1,
                                                      "herhaalaankoop": 1, "product_size": 1, "promos": 1,
@@ -96,7 +95,7 @@ def get_product_data():
                             category, sub_category, sub_sub_category, fast_mover, herhaalaankoop, product_size, promos,
                             stock_level))
         if 'properties' in local_product:
-            for key, value in local_product['properties'].items():
+            for key, value in local_product['properties'].items(): 
                 if value != None and key != "klacht":
                     prop_sql.append((id, key, value))
     print('products and properties', datetime.datetime.now() - time0)
@@ -143,7 +142,6 @@ def GetProfiledata():
             latest_activity = None
             segment = None
 
-
         profiles.append((profile_id,latest_activity,latest,count,segment))
 
         if "previously_recommended" in local_profile:
@@ -158,7 +156,6 @@ def GetProfiledata():
                 for product in local_profile["recommendations"]["viewed_before"]:
                     viewed_before.append((product, profile_id))
         i +=1
-
 
     print("profiles,previously_recommended,similars,viewed_before",datetime.datetime.now()-time0)
 
