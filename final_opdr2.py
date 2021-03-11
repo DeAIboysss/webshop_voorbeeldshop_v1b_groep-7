@@ -26,11 +26,11 @@ def Check_key_in_dict(Key, Dict):
 def get_product_data():
     prop_sql = []
     product_sql = []
-    for local_product in database.products.find({}, {"_id": 1, 'properties': 1, "name": 1, "price": 1, "brand": 1, "is_active": 1,
-                                                     "sm_product_type": 1, "description": 1, "gender": 1, "category": 1,
+    for local_product in database.products.find({}, {"_id": 1, 'properties': 1, "name": 1, "price": 1, "brand": 1, "sm": 1,
+                                                    "description": 1, "gender": 1, "category": 1,
                                                      "sub_category": 1, "sub_sub_category": 1, "fast_mover": 1,
-                                                     "herhaalaankoop": 1, "product_size": 1, "promos": 1,
-                                                     "stock_level": 1,"_preferences":1}):
+                                                     "herhaalaankopen": 1, "product_size": 1, "promos": 1,
+                                                     "stock": 1,"_preferences":1}):
 
         id = (local_product['_id'])
         brand = Check_key_in_dict('brand', local_product)
@@ -53,20 +53,8 @@ def get_product_data():
         sub_sub_category = Check_key_in_dict('sub_sub_category', local_product)
         color = Check_key_in_dict('color', local_product)
         fast_mover = Check_key_in_dict('fast_mover', local_product)
-        herhaalaankoop = Check_key_in_dict('herhaalaankoop', local_product)
-        product_size = None
-        promos = None
+        herhaalaankopen = Check_key_in_dict('herhaalaankopen', local_product)
 
-        if '_preferences' in local_product:
-            for item in local_product['_preferences']:
-                if 'product_size' in item:
-                    product_size = item.split(':')
-                if 'promos' in item:
-                    promos = item.split(':')
-
-        else:
-            product_size = None
-            promos = None
         if 'price' in local_product:
             selling_price = Check_key_in_dict('selling_price', local_product['price'])
             cost_price = Check_key_in_dict('cost_price', local_product['price'])
@@ -91,9 +79,8 @@ def get_product_data():
 
         # sqlList = ;
         # sqlList = sqlList.replace("None", "NULL")
-        product_sql.append((id, name, cost_price, selling_price, brand, is_active, sm_product_type, description, gender,
-                            category, sub_category, sub_sub_category, fast_mover, herhaalaankoop, product_size, promos,
-                            stock_level))
+        product_sql.append((id, name, selling_price, brand, is_active, sm_product_type, description, gender,
+                            category, sub_category, sub_sub_category, fast_mover, herhaalaankopen, stock_level))
         if 'properties' in local_product:
             for key, value in local_product['properties'].items(): 
                 if value != None and key != "klacht":
@@ -202,10 +189,10 @@ def get_sessions():
 
 
 product_sql, prop_sql = get_product_data()
-# profiles,previously_recommended,similars,viewed_before = GetProfiledata()
-# sessions, events, orders = get_sessions()
+profiles,previously_recommended,similars,viewed_before = GetProfiledata()
+sessions, events, orders = get_sessions()
 print("sql execute")
-cur.executemany("INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", product_sql)
+cur.executemany("INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", product_sql)
 con.commit()
 print("insert Product done",datetime.datetime.now() - time0)
 
@@ -213,33 +200,33 @@ cur.executemany("INSERT INTO properties VALUES (%s,%s,%s);", prop_sql)
 con.commit()
 print("insert properties done",datetime.datetime.now() - time0)
 
-# cur.executemany("INSERT INTO profile VALUES (%s,%s,%s,%s,%s);",profiles)
-# con.commit()
-# print("insert profile done",datetime.datetime.now() - time0)
-#
-# cur.executemany("INSERT INTO previously_recommended VALUES (%s,%s);",previously_recommended)
-# con.commit()
-# print("insert previously_recommended done",datetime.datetime.now() - time0)
-#
-# cur.executemany("INSERT INTO similars VALUES (%s,%s);",similars)
-# con.commit()
-# print("insert similars done",datetime.datetime.now() - time0)
-#
-# cur.executemany("INSERT INTO viewed_before VALUES (%s,%s);",viewed_before)
-# con.commit()
-# print("insert viewed_before done",datetime.datetime.now() - time0)
-#
-# cur.executemany("INSERT INTO sessions values(%s,%s,%s,%s,%s)", sessions)
-# con.commit()
-# print("insert sessions done",datetime.datetime.now() - time0)
-#
-# cur.executemany("INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s)", events)
-# con.commit()
-# print("insert events done",datetime.datetime.now() - time0)
-#
-# cur.executemany("INSERT INTO orders values(%s,%s)", orders)
-# con.commit()
-# print("insert orders done",datetime.datetime.now() - time0)
+cur.executemany("INSERT INTO profile VALUES (%s,%s,%s,%s,%s);",profiles)
+con.commit()
+print("insert profile done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO previously_recommended VALUES (%s,%s);",previously_recommended)
+con.commit()
+print("insert previously_recommended done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO similars VALUES (%s,%s);",similars)
+con.commit()
+print("insert similars done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO viewed_before VALUES (%s,%s);",viewed_before)
+con.commit()
+print("insert viewed_before done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO sessions values(%s,%s,%s,%s,%s)", sessions)
+con.commit()
+print("insert sessions done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s)", events)
+con.commit()
+print("insert events done",datetime.datetime.now() - time0)
+
+cur.executemany("INSERT INTO orders values(%s,%s)", orders)
+con.commit()
+print("insert orders done",datetime.datetime.now() - time0)
 
 cur.close()
 con.close()
