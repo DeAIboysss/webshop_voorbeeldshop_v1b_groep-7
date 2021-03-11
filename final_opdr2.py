@@ -24,6 +24,12 @@ def Check_key_in_dict(Key, Dict):
 
 
 def get_product_data():
+    '''
+    Deze functie haalt alle product data op uit mongodb
+    vervolgens zet deze functie het in de juiste volgorde en de juiste format in een tuple en voegt deze vervolgens toe aan een list
+
+    :return: 2 list met tuples
+    '''
     prop_sql = []
     product_sql = []
     for local_product in database.products.find({}, {"_id": 1, 'properties': 1, "name": 1, "price": 1, "brand": 1, "sm": 1,
@@ -89,6 +95,12 @@ def get_product_data():
     return product_sql, prop_sql
 
 def GetProfiledata():
+    '''
+    Deze functie haalt alle product data op uit mongodb
+    vervolgens zet deze functie het in de juiste volgorde en de juiste format in een tuple en voegt deze vervolgens toe aan een list
+
+    :return: 4 list met tuples
+    '''
 
     global time0
     i = 0
@@ -150,6 +162,12 @@ def GetProfiledata():
 
 
 def get_sessions():
+    '''
+    Deze functie haalt alle product data op uit mongodb
+    vervolgens zet deze functie het in de juiste volgorde en de juiste format in een tuple en voegt deze vervolgens toe aan een list
+
+    :return: 3 list met tuples
+    '''
     i= 0
     session_sql = []
     order_sql = []
@@ -191,6 +209,9 @@ def get_sessions():
 product_sql, prop_sql = get_product_data()
 profiles,previously_recommended,similars,viewed_before = GetProfiledata()
 sessions, events, orders = get_sessions()
+
+
+# De execute many parsed de tuples 1 voor 1 in een stukje sql op de plekken van de %s en geeft hier de juiste format aan mee
 print("sql execute")
 cur.executemany("INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", product_sql)
 con.commit()
