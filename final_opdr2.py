@@ -24,14 +24,19 @@ def Check_key_in_dict(Key, Dict):
 
 
 def get_product_data():
+    '''
+    Deze functie haalt alle product data op uit mongodb
+    vervolgens zet deze functie het in de juiste volgorde en de juiste format in een tuple en voegt deze vervolgens toe aan een list
+
+    :return: 2 list met tuples
+    '''
     prop_sql = []
     product_sql = []
-    for local_product in database.products.find({}, {"_id": 1, 'properties': 1, "name": 1, "cost_price": 1,
-                                                     "selling_price": 1, "brand": 1, "is_active": 1,
-                                                     "sm_product_type": 1, "discription": 1, "gender": 1, "category": 1,
+    for local_product in database.products.find({}, {"_id": 1, 'properties': 1, "name": 1, "price": 1, "brand": 1, "sm": 1,
+                                                    "description": 1, "gender": 1, "category": 1,
                                                      "sub_category": 1, "sub_sub_category": 1, "fast_mover": 1,
-                                                     "herhaalaankoop": 1, "product_size": 1, "promos": 1,
-                                                     "stock_level": 1}):
+                                                     "herhaalaankopen": 1, "product_size": 1, "promos": 1,
+                                                     "stock": 1,"_preferences":1}):
 
         id = (local_product['_id'])
         brand = Check_key_in_dict('brand', local_product)
@@ -43,31 +48,19 @@ def get_product_data():
                 name = name.replace("'", "''")
         category = Check_key_in_dict('category', local_product)
         gender = Check_key_in_dict('gender', local_product)
-        discription = Check_key_in_dict('description', local_product)
-        discription = str(discription)
-        if "\'" in discription:
-            discription = discription.replace("\'", '')
-        elif "'" in discription:
-            discription = discription.replace("'", "''")
+        description = Check_key_in_dict('description', local_product)
+        description = str(description)
+        if "\'" in description:
+            description = description.replace("\'", '')
+        elif "'" in description:
+            description = description.replace("'", "''")
 
         sub_category = Check_key_in_dict('sub_category', local_product)
         sub_sub_category = Check_key_in_dict('sub_sub_category', local_product)
         color = Check_key_in_dict('color', local_product)
         fast_mover = Check_key_in_dict('fast_mover', local_product)
-        herhaalaankoop = Check_key_in_dict('herhaalaankoop', local_product)
-        product_size = None
-        promos = None
+        herhaalaankopen = Check_key_in_dict('herhaalaankopen', local_product)
 
-        if '_preferences' in local_product:
-            for item in local_product['_preferences']:
-                if 'product_size' in item:
-                    product_size = item.split(':')
-                if 'promos' in item:
-                    promos = item.split(':')
-
-        else:
-            product_size = None
-            promos = None
         if 'price' in local_product:
             selling_price = Check_key_in_dict('selling_price', local_product['price'])
             cost_price = Check_key_in_dict('cost_price', local_product['price'])
@@ -92,9 +85,8 @@ def get_product_data():
 
         # sqlList = ;
         # sqlList = sqlList.replace("None", "NULL")
-        product_sql.append((id, name, cost_price, selling_price, brand, is_active, sm_product_type, discription, gender,
-                            category, sub_category, sub_sub_category, fast_mover, herhaalaankoop, product_size, promos,
-                            stock_level))
+        product_sql.append((id, name, selling_price, brand, is_active, sm_product_type, description, gender,
+                            category, sub_category, sub_sub_category, fast_mover, herhaalaankopen, stock_level))
         if 'properties' in local_product:
             for key, value in local_product['properties'].items(): 
                 if value != None and key != "klacht":
@@ -103,6 +95,12 @@ def get_product_data():
     return product_sql, prop_sql
 
 def GetProfiledata():
+    '''
+    Deze functie haalt alle product data op uit mongodb
+    vervolgens zet deze functie het in de juiste volgorde en de juiste format in een tuple en voegt deze vervolgens toe aan een list
+
+    :return: 4 list met tuples
+    '''
 
     global time0
     i = 0
@@ -143,7 +141,6 @@ def GetProfiledata():
             latest_activity = None
             segment = None
 
-
         profiles.append((profile_id,latest_activity,latest,count,segment))
 
         if "previously_recommended" in local_profile:
@@ -159,13 +156,18 @@ def GetProfiledata():
                     viewed_before.append((product, profile_id))
         i +=1
 
-
     print("profiles,previously_recommended,similars,viewed_before",datetime.datetime.now()-time0)
 
     return profiles,previously_recommended,similars,viewed_before
 
 
 def get_sessions():
+    '''
+    Deze functie haalt alle product data op uit mongodb
+    vervolgens zet deze functie het in de juiste volgorde en de juiste format in een tuple en voegt deze vervolgens toe aan een list
+
+    :return: 3 list met tuples
+    '''
     i= 0
     session_sql = []
     order_sql = []
@@ -207,8 +209,11 @@ def get_sessions():
 product_sql, prop_sql = get_product_data()
 profiles,previously_recommended,similars,viewed_before = GetProfiledata()
 sessions, events, orders = get_sessions()
+
+
+# De execute many parsed de tuples 1 voor 1 in een stukje sql op de plekken van de %s en geeft hier de juiste format aan mee
 print("sql execute")
-cur.executemany("INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", product_sql)
+cur.executemany("INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", product_sql)
 con.commit()
 print("insert Product done",datetime.datetime.now() - time0)
 
