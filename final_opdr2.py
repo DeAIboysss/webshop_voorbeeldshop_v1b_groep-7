@@ -211,44 +211,26 @@ profiles,previously_recommended,similars,viewed_before = GetProfiledata()
 sessions, events, orders = get_sessions()
 
 
-# De execute many parsed de tuples 1 voor 1 in een stukje sql op de plekken van de %s en geeft hier de juiste format aan mee
-print("sql execute")
-cur.executemany("INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", product_sql)
-con.commit()
-print("insert Product done",datetime.datetime.now() - time0)
+dict_values = {"INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);": product_sql,
+               "INSERT INTO properties VALUES (%s,%s,%s);": prop_sql,
+               "INSERT INTO profile VALUES (%s,%s,%s,%s,%s);": profiles,
+               "INSERT INTO previously_recommended VALUES (%s,%s);": previously_recommended,
+               "INSERT INTO similars VALUES (%s,%s);": similars,
+               "INSERT INTO viewed_before VALUES (%s,%s);": viewed_before,
+               "INSERT INTO sessions values(%s,%s,%s,%s,%s);": sessions,
+               "INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s);": events,
+               "INSERT INTO orders values(%s,%s);": orders}
 
-cur.executemany("INSERT INTO properties VALUES (%s,%s,%s);", prop_sql)
-con.commit()
-print("insert properties done",datetime.datetime.now() - time0)
+lst_insert_prints = []
 
-cur.executemany("INSERT INTO profile VALUES (%s,%s,%s,%s,%s);",profiles)
-con.commit()
-print("insert profile done",datetime.datetime.now() - time0)
+for key, value in dict_values.items():
+    cur.executemany(key, value)
+    con.commit()
+    print(f"insert {key} done",datetime.datetime.now() - time0)
 
-cur.executemany("INSERT INTO previously_recommended VALUES (%s,%s);",previously_recommended)
-con.commit()
-print("insert previously_recommended done",datetime.datetime.now() - time0)
+print('for loop done')
 
-cur.executemany("INSERT INTO similars VALUES (%s,%s);",similars)
-con.commit()
-print("insert similars done",datetime.datetime.now() - time0)
-
-cur.executemany("INSERT INTO viewed_before VALUES (%s,%s);",viewed_before)
-con.commit()
-print("insert viewed_before done",datetime.datetime.now() - time0)
-
-cur.executemany("INSERT INTO sessions values(%s,%s,%s,%s,%s)", sessions)
-con.commit()
-print("insert sessions done",datetime.datetime.now() - time0)
-
-cur.executemany("INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s)", events)
-con.commit()
-print("insert events done",datetime.datetime.now() - time0)
-
-cur.executemany("INSERT INTO orders values(%s,%s)", orders)
-con.commit()
-print("insert orders done",datetime.datetime.now() - time0)
-
+#con.commit()
 cur.close()
 con.close()
 print(datetime.datetime.now() - time0)
