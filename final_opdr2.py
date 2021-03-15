@@ -32,11 +32,12 @@ def get_product_data():
     '''
     prop_sql = []
     product_sql = []
-    for local_product in database.products.find({}, {"_id": 1, 'properties': 1, "name": 1, "price": 1, "brand": 1, "sm": 1,
-                                                    "description": 1, "gender": 1, "category": 1,
-                                                     "sub_category": 1, "sub_sub_category": 1, "fast_mover": 1,
-                                                     "herhaalaankopen": 1, "product_size": 1, "promos": 1,
-                                                     "stock": 1,"_preferences":1}):
+    for local_product in database.products.find({},
+                                                {"_id": 1, 'properties': 1, "name": 1, "price": 1, "brand": 1, "sm": 1,
+                                                 "description": 1, "gender": 1, "category": 1,
+                                                 "sub_category": 1, "sub_sub_category": 1, "fast_mover": 1,
+                                                 "herhaalaankopen": 1, "product_size": 1, "promos": 1,
+                                                 "stock": 1, "_preferences": 1}):
 
         id = (local_product['_id'])
         brand = Check_key_in_dict('brand', local_product)
@@ -88,11 +89,12 @@ def get_product_data():
         product_sql.append((id, name, selling_price, brand, is_active, sm_product_type, description, gender,
                             category, sub_category, sub_sub_category, fast_mover, herhaalaankopen, stock_level))
         if 'properties' in local_product:
-            for key, value in local_product['properties'].items(): 
+            for key, value in local_product['properties'].items():
                 if value != None and key != "klacht":
                     prop_sql.append((id, key, value))
     print('products and properties', datetime.datetime.now() - time0)
     return product_sql, prop_sql
+
 
 def GetProfiledata():
     '''
@@ -104,22 +106,22 @@ def GetProfiledata():
 
     global time0
     i = 0
-    profiles =[]
+    profiles = []
     previously_recommended = []
-    similars =[]
-    viewed_before=[]
+    similars = []
+    viewed_before = []
 
     # time1 = datetime.datetime.now()
     # lasttime = datetime.datetime.now() -datetime.datetime.now()
 
-    #while True  and i <itemindex:
-    for profile in database.profiles.find({},{"_id":1,"order":1,"recommendations":1,"previously_recommended":1,"similars":1,"viewed_before":1}):
+    # while True  and i <itemindex:
+    for profile in database.profiles.find({}, {"_id": 1, "order": 1, "recommendations": 1, "previously_recommended": 1,
+                                               "similars": 1, "viewed_before": 1}):
 
-        local_profile =profile # db_profiles[i]
+        local_profile = profile  # db_profiles[i]
 
-        #profiles table
+        # profiles table
         profile_id = str(local_profile["_id"])
-
 
         if 'order' in local_profile:
             if 'latest' in local_profile["order"]:
@@ -141,7 +143,7 @@ def GetProfiledata():
             latest_activity = None
             segment = None
 
-        profiles.append((profile_id,latest_activity,latest,count,segment))
+        profiles.append((profile_id, latest_activity, latest, count, segment))
 
         if "previously_recommended" in local_profile:
             for product in local_profile["previously_recommended"]:
@@ -154,11 +156,11 @@ def GetProfiledata():
             if "viewed_before" in local_profile["recommendations"]:
                 for product in local_profile["recommendations"]["viewed_before"]:
                     viewed_before.append((product, profile_id))
-        i +=1
+        i += 1
 
-    print("profiles,previously_recommended,similars,viewed_before",datetime.datetime.now()-time0)
+    print("profiles,previously_recommended,similars,viewed_before", datetime.datetime.now() - time0)
 
-    return profiles,previously_recommended,similars,viewed_before
+    return profiles, previously_recommended, similars, viewed_before
 
 
 def get_sessions():
@@ -168,15 +170,16 @@ def get_sessions():
 
     :return: 3 list met tuples
     '''
-    i= 0
+    i = 0
     session_sql = []
     order_sql = []
     events_sql = []
-    for local_sessions in database.sessions.find({},{"_id":1,"session_start":1,"session_end":1,"has_sale":1,"segment":1,"events":1,"order":1}):
-        id = str(Check_key_in_dict('_id',local_sessions))
-        session_start = str(Check_key_in_dict('session_start',local_sessions))
-        session_end = str(Check_key_in_dict('session_end',local_sessions))
-        has_sale = bool(Check_key_in_dict('has_sale',local_sessions))
+    for local_sessions in database.sessions.find({}, {"_id": 1, "session_start": 1, "session_end": 1, "has_sale": 1,
+                                                      "segment": 1, "events": 1, "order": 1}):
+        id = str(Check_key_in_dict('_id', local_sessions))
+        session_start = str(Check_key_in_dict('session_start', local_sessions))
+        session_end = str(Check_key_in_dict('session_end', local_sessions))
+        has_sale = bool(Check_key_in_dict('has_sale', local_sessions))
         session_sql.append((id, session_start, session_end, has_sale, Check_key_in_dict('segment', local_sessions)))
 
         # events table:
@@ -187,7 +190,8 @@ def get_sessions():
                 action = event['action']
                 events_sql.append((id, Check_key_in_dict('product', event), t, source, action,
                                    Check_key_in_dict('pagetype', event), Check_key_in_dict('time_on_page', event),
-                                   Check_key_in_dict('click_count', event),Check_key_in_dict('elements_clicked',event)))
+                                   Check_key_in_dict('click_count', event),
+                                   Check_key_in_dict('elements_clicked', event)))
 
         # orders table:
         if 'order' in local_sessions and local_sessions['order'] != None:
@@ -195,9 +199,9 @@ def get_sessions():
             order = local_sessions['order']
             for product in order['products']:
                 if product != None and not isinstance(product, str):
-                        for key, value in product.items():
-                            id_product = value
-                            order_sql.append((id,id_product))
+                    for key, value in product.items():
+                        id_product = value
+                        order_sql.append((id, id_product))
         # if i % 1000 ==0:
         #     print("sessions",i)
         # i+=1
@@ -206,31 +210,78 @@ def get_sessions():
     return session_sql, events_sql, order_sql
 
 
-product_sql, prop_sql = get_product_data()
-profiles,previously_recommended,similars,viewed_before = GetProfiledata()
-sessions, events, orders = get_sessions()
+def buids():
+    '''
+    Deze functie zet alle buids die in session en in profile voor komen in een lijst samenmet als prim key de buid
+    :return:
+    '''
+    dict_buid = {}
+    sql = []
+    for local_session in database.sessions.find({}, {"_id": 1, "buid": 1}):
+        if 'buid' in local_session and local_session['buid'] != None:
+                for buid in local_session['buid']:
+                    if isinstance(buid, list):
+                        dict_buid[buid[0]] = {}
+                        dict_buid[buid[0]]['s_id'] = (str(local_session['_id']))
+                    else:
+                        dict_buid[buid] = {}
+                        dict_buid[buid]['s_id'] = (str(local_session['_id']))
+
+    for local_profile in database.profiles.find({}, {"_id": 1, "buids": 1}):
+        if 'buids' in local_profile and local_profile['buids'] != None:
+            for buid in local_profile['buids']:
+                if isinstance(buid, list):
+                    if buid in dict_buid:
+                        dict_buid[buid[0]]['p_id'] =(str(local_profile['_id']))
+                    else:
+                        dict_buid[buid[0]] = {}
+                        dict_buid[buid[0]]['p_id'] = (str(local_profile['_id']))
+                else:
+                    if buid in dict_buid:
+                        dict_buid[buid]['p_id'] = (str(local_profile['_id']))
+                    else:
+                        dict_buid[buid] = {}
+                        dict_buid[buid]['p_id'] = (str(local_profile['_id']))
+
+    for key, value in dict_buid.items():
+        if 's_id' in value and 'p_id' in value:
+            sql.append((value['s_id'], value['p_id'],key))
+
+    i = 0
+    for buid in sql:
+            cur.execute("INSERT INTO buids VALUES ('%s','%s','%s');" %(buid[0],buid[1],buid[2]))
+            con.commit()
+            print('succes')
+
+    print(i)
 
 
-dict_values = {"INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);": product_sql,
-               "INSERT INTO properties VALUES (%s,%s,%s);": prop_sql,
-               "INSERT INTO profile VALUES (%s,%s,%s,%s,%s);": profiles,
-               "INSERT INTO previously_recommended VALUES (%s,%s);": previously_recommended,
-               "INSERT INTO similars VALUES (%s,%s);": similars,
-               "INSERT INTO viewed_before VALUES (%s,%s);": viewed_before,
-               "INSERT INTO sessions values(%s,%s,%s,%s,%s);": sessions,
-               "INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s);": events,
-               "INSERT INTO orders values(%s,%s);": orders}
+# product_sql, prop_sql = get_product_data()
+# profiles,previously_recommended,similars,viewed_before = GetProfiledata()
+# sessions, events, orders = get_sessions()
+buids()
+#cur.executemany("INSERT INTO buids VALUES (%s,%s,%s);", )
+# dict_values = {"INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);": product_sql,
+#                "INSERT INTO properties VALUES (%s,%s,%s);": prop_sql,
+#                "INSERT INTO profile VALUES (%s,%s,%s,%s,%s);": profiles,
+#                "INSERT INTO previously_recommended VALUES (%s,%s);": previously_recommended,
+#                "INSERT INTO similars VALUES (%s,%s);": similars,
+#                "INSERT INTO viewed_before VALUES (%s,%s);": viewed_before,
+#                "INSERT INTO sessions values(%s,%s,%s,%s,%s);": sessions,
+#                "INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s);": events,
+#                "INSERT INTO orders values(%s,%s);": orders
+#                }
+#
+# lst_insert_prints = []
+#
+# for key, value in dict_values.items():
+#     cur.executemany(key, value)
+#     con.commit()
+#     print(f"insert {key} done",datetime.datetime.now() - time0)
+#
+# print('for loop done')
 
-lst_insert_prints = []
-
-for key, value in dict_values.items():
-    cur.executemany(key, value)
-    con.commit()
-    print(f"insert {key} done",datetime.datetime.now() - time0)
-
-print('for loop done')
-
-#con.commit()
+con.commit()
 cur.close()
 con.close()
 print(datetime.datetime.now() - time0)
