@@ -16,13 +16,15 @@ dbstring = 'mongodb+srv://{0}:{1}@{2}/test?retryWrites=true&w=majority'
 # add_resource method, we open the connection to the database outside of the 
 # Recom class.
 load_dotenv()
-if os.getenv(envvals[0]) is not None:
-    envvals = list(map(lambda x: str(os.getenv(x)), envvals))
-    client = MongoClient(dbstring.format(*envvals))
-else:
-    client = MongoClient()
+# if os.getenv(envvals[0]) is not None:
+#     envvals = list(map(lambda x: str(os.getenv(x)), envvals))
+#     client = MongoClient(dbstring.format(*envvals))
+# else:
+client = MongoClient()
 database = client.huwebshop 
+from recom_functions.recom_Johan_profiles import get_simmilar_profiles as recom_1
 
+recom_1('5a393d68ed295900010384ca','sub_category','brand')
 class Recom(Resource):
     """ This class represents the REST API that provides the recommendations for
     the webshop. At the moment, the API simply returns a random set of products
@@ -31,9 +33,10 @@ class Recom(Resource):
     def get(self, profileid, count):
         """ This function represents the handler for GET requests coming in
         through the API. It currently returns a random sample of products. """
-        randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
-        prodids = list(map(lambda x: x['_id'], list(randcursor)))
-        return prodids, 200
+        # randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
+        # prodids = list(map(lambda x: x['_id'], list(randcursor)))
+        prodids = recom_1('59dce304a56ac6edb4c11b92','sub_category','brand')
+        return prodids[:count], 200
 
 # This method binds the Recom class to the REST API, to parse specifically
 # requests in the format described below.

@@ -260,7 +260,7 @@ def buids():
 # profiles,previously_recommended,similars,viewed_before = GetProfiledata()
 # sessions, events, orders = get_sessions()
 buids()
-#cur.executemany("INSERT INTO buids VALUES (%s,%s,%s);", )
+# cur.executemany("INSERT INTO buids VALUES (%s,%s,%s);", )
 # dict_values = {"INSERT INTO product VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);": product_sql,
 #                "INSERT INTO properties VALUES (%s,%s,%s);": prop_sql,
 #                "INSERT INTO profile VALUES (%s,%s,%s,%s,%s);": profiles,
@@ -271,15 +271,15 @@ buids()
 #                "INSERT INTO events values(%s,%s,%s,%s,%s,%s,%s,%s,%s);": events,
 #                "INSERT INTO orders values(%s,%s);": orders
 #                }
-#
-# lst_insert_prints = []
-#
-# for key, value in dict_values.items():
-#     cur.executemany(key, value)
-#     con.commit()
-#     print(f"insert {key} done",datetime.datetime.now() - time0)
-#
-# print('for loop done')
+
+lst_insert_prints = []
+
+for key, value in dict_values.items():
+    cur.executemany(key, value)
+    con.commit()
+    print(f"insert {key} done",datetime.datetime.now() - time0)
+
+print('for loop done')
 
 con.commit()
 cur.close()
