@@ -23,8 +23,11 @@ load_dotenv()
 client = MongoClient()
 database = client.huwebshop 
 from recom_functions.recom_Johan_profiles import get_simmilar_profiles as recom_1
+from recom_functions.recom_Jason import read_meest_verkocht as recom_2
+from recom_functions.connect import connection
 
-recom_1('5a393d68ed295900010384ca','sub_category','brand')
+
+#recom_1('5a393d68ed295900010384ca')
 class Recom(Resource):
     """ This class represents the REST API that provides the recommendations for
     the webshop. At the moment, the API simply returns a random set of products
@@ -35,8 +38,15 @@ class Recom(Resource):
         through the API. It currently returns a random sample of products. """
         # randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
         # prodids = list(map(lambda x: x['_id'], list(randcursor)))
-        prodids = recom_1('59dce304a56ac6edb4c11b92','sub_category','brand')
+        #prodids = recom_2(con,cur)
+        con, cur = connection('opdracht2_final', 'kip12345')
+        prodids = recom_2(con,cur)
+        cur.close()
+        con.close()
+        #print(prodids,flush=True)
         return prodids[:count], 200
+
+
 
 # This method binds the Recom class to the REST API, to parse specifically
 # requests in the format described below.
