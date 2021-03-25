@@ -25,7 +25,7 @@ def database_connection():
 database_connection()
 
 
-def list_column_names(name):
+def list_base_names(name):
     """
     Asks for the name of a list and returns said list.
 
@@ -51,21 +51,19 @@ def create_new_table(recom_basis):
         :return: None.
     """
 
-    '''DELETE ALL TABLES:'''
-
-    cur.execute("DROP TABLE IF EXISTS collaborative_recommendations;")
+    '''DELETE ALL recom TABLES:'''
+    #cur.execute("DROP TABLE IF EXISTS collaborative_recommendations;")
 
 
     cur.execute("""CREATE TABLE IF NOT EXISTS collaborative_recommendations
                             (recom_basis VARCHAR,lst_product_id VARCHAR);""")
     con.commit()
 
-for i in list_column_names('sub_sub_category'):
+for i in list_base_names('sub_sub_category'):
      create_new_table(i)
 
-for j in list_column_names('personality_type'):
+for j in list_base_names('personality_type'):
      create_new_table(j)
-
 
 
 #======================================= SELECT AND INSERT DATA:
@@ -83,69 +81,64 @@ def select_data(sql):
     return records
 
 
-def insert_into_tables(records, table_name):
+def insert_into_tables(base_name, lst_recoms):
     """
-    Takes data from function select_data and inserts it into the correct table.
+    Inserts data from insert_different_tables and inserts it in the right columns etc.
 
-        :param records: A list (records) with rows as tuples.
-        :param table_name: Table name in the form of a string.
-        :return: None.
+        :param base_name: name of the base on which a recommendation is made as a string.
+        :param lst_recoms: list with product id's as a string.
     """
-    print(table_name)
-    print(records)
+    print(base_name)
+    print(lst_recoms)
 
-    # for row in records:
-    #     cur.execute("INSERT INTO %s VALUES ('%s', '%s', '%s', '%s', '%s', '%s');"%(table_name, row[0], row[1], row[2], row[3], row[4], row[5]))
+    cur.execute("INSERT INTO collaborative_recommendations VALUES ('%s', '%s');" % (base_name, lst_recoms))
 
 
-def sub_sub_category_inserts():
+def insert_different_tables():
     """
-    Content filtering based on sub_sub_category and if the product has a promo.
-    Runs a function insert_into_tables with the right data for the different recommendation sub_sub_category tables.
+    Asks for the right data and calls on insert function to put data in the right columns.
     """
-    names_sub_sub_category = sorted(list_column_names('names_sub_sub_category'), key=lambda empty: (empty is None, empty))
-    sub_sub_category = sorted(list_column_names('sub_sub_category'), key=lambda empty: (empty is None, empty))
+    sql = """SELECT product_id, count(product_id) as aantal FROM orders o
+                INNER JOIN product pd
+                ON pd.id = o.product_id
+                WHERE pd.selling_price > 0
+                GROUP BY product_id
+                ORDER BY aantal DESC LIMIT 4;"""
 
-    for i, value in enumerate(sub_sub_category):
-        if names_sub_sub_category[i] == None:
-            query = "SELECT productid as id, value as promo, name as product_name,sub_sub_category, gender as target_audience, selling_price as price FROM product pd INNER JOIN properties pp ON pd.id = pp.productid WHERE pp.key like 'discount' AND sub_sub_category like '%s' ORDER BY id ASC LIMIT 4;" % (names_sub_sub_category[i])
-        else:
-            query = "SELECT productid as id, value as promo, name as product_name,sub_sub_category, gender as target_audience, selling_price as price FROM product pd INNER JOIN properties pp ON pd.id = pp.productid WHERE pp.key like 'discount' AND sub_sub_category like '%s' ORDER BY id ASC LIMIT 4;" % (names_sub_sub_category[i].replace("'", "''"))
+    records = select_data(sql)
 
-        insert_into_tables(select_data(query), f"rec_{sub_sub_category[i]}".lower())
+    recoms = []
+
+    for record in records:
+        recoms.append(record[0])
+    joined = ','.join(recoms)
+
+    print(recoms)
+    print(joined)
+
+    insert_into_tables('meest_verkocht', joined)
 
 
-#sub_sub_category_inserts()
+# insert_different_tables() # <= uncomment for insert
 
 
-def personality_type_inserts():
+def read_meest_verkocht():
     """
-    Content filtering based on gender of a product and segment of a profile and if the product has a promo.
-    Runs a function insert_into_tables with the right data for the different recommendation sub_sub_category tables.
+        Connects to the database so when called upon in huw_recommend.py the code knows what data to select.
+
+            :return split: A list with product id's.
     """
-    new_personality_type = sorted(list_column_names('personality_type'))
+    con = database_connection()
+    sql = "SELECT * FROM collaborative_recommendations WHERE recom_basis = 'meest_verkocht';"
+    records = select_data(sql)
+    ids = str(records[0][1])
 
-    for i, value in enumerate(new_personality_type):
-        value = value.lower()
+    split = ids.split(',')
 
-        if value.startswith('shopping_cart') or value.startswith('fun_shopper'):
-            segment = "_".join(value.split("_", 2)[:2])
-            gender = "_".join(value.split("_", 2)[2:])
-
-            query = "SELECT pp.productid as id, value as promo, name as product_name, sub_sub_category, gender as target_audience, selling_price as price FROM product pd INNER JOIN properties pp ON pd.id = pp.productid INNER JOIN viewed_before vb ON pd.id = vb.productid INNER JOIN profile pf ON pf.profile_id = vb.profileprofile_id WHERE pp.key like 'discount' AND (pd.gender like '%s' OR pd.gender like INITCAP('%s')) AND (pf.segment like '%s'OR pf.segment like UPPER('%s')) LIMIT 4;" % (gender, gender, segment, segment)
-
-        else:
-            value = value.split("_", 1)
-            segment = value[0]
-            gender = value[1]
-
-            query = "SELECT pp.productid as id, value as promo, name as product_name, sub_sub_category, gender as target_audience, selling_price as price FROM product pd INNER JOIN properties pp ON pd.id = pp.productid INNER JOIN viewed_before vb ON pd.id = vb.productid INNER JOIN profile pf ON pf.profile_id = vb.profileprofile_id WHERE pp.key like 'discount' AND (pd.gender like '%s' OR pd.gender like INITCAP('%s')) AND (pf.segment like '%s'OR pf.segment like UPPER('%s')) LIMIT 4" % (gender, gender, segment, segment)
-
-        insert_into_tables(select_data(query), f"type_{new_personality_type[i]}".lower())
+    return split
 
 
-#personality_type_inserts()
-
+read_meest_verkocht()
 
 con.commit()
 cur.close()

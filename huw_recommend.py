@@ -3,6 +3,9 @@ from flask_restful import Api, Resource, reqparse
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from recom_functions.recom_Jason import read_meest_verkocht
+
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -31,8 +34,16 @@ class Recom(Resource):
     def get(self, profileid, count):
         """ This function represents the handler for GET requests coming in
         through the API. It currently returns a random sample of products. """
-        randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
-        prodids = list(map(lambda x: x['_id'], list(randcursor)))
+        # randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
+        # prodids = list(map(lambda x: x['_id'], list(randcursor)))
+
+        # prodids = read_meest_verkocht()
+        prodids = read_meest_verkocht()
+
+        print(prodids, flush=True)
+
+        # prodids = ['38815', '1651', '1981', '32484']
+
         return prodids, 200
 
 # This method binds the Recom class to the REST API, to parse specifically
