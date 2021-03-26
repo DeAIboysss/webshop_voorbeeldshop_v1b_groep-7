@@ -3,6 +3,7 @@ from flask_restful import Api, Resource, reqparse
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
+import CollectRecommendations as CR
 
 app = Flask(__name__)
 api = Api(app)
@@ -21,7 +22,7 @@ if os.getenv(envvals[0]) is not None:
     client = MongoClient(dbstring.format(*envvals))
 else:
     client = MongoClient()
-database = client.huwebshop 
+database = client.huwebshop
 
 class Recom(Resource):
     """ This class represents the REST API that provides the recommendations for
@@ -31,10 +32,15 @@ class Recom(Resource):
     def get(self, profileid, count):
         """ This function represents the handler for GET requests coming in
         through the API. It currently returns a random sample of products. """
-        randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
-        prodids = list(map(lambda x: x['_id'], list(randcursor)))
+
+        #randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
+        #prodids = list(map(lambda x: x['_id'], list(randcursor)))
+        CR.connect()
+        prodids = CR.collect_contentfilter(profileid)
+        CR.close()
         return prodids, 200
 
+        # bij een ander getal
 # This method binds the Recom class to the REST API, to parse specifically
 # requests in the format described below.
 api.add_resource(Recom, "/<string:profileid>/<int:count>")
