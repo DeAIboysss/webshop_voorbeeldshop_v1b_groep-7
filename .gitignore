@@ -2,4 +2,6 @@ __pycache__/
 datasets/
 .env
 .flaskenv
+opdracht2a/
+database.dll
 utilities/imageurls.csv
