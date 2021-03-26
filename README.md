@@ -9,7 +9,7 @@ Deze recommendations worden aan de hand van een heuristiek opgesteld.
 * Anderen bekeken ook
 * Personal
 
-### Simple recommendation heuristiek:
+### [Simpel](recom_functions/recom_simple_popular.py) recommendation heuristiek:
 De vier best verkochte producten met uitzondering van producten die 0 euro kosten.
 
 ### Sub sub category en prijsklasse recommendation:
@@ -22,6 +22,6 @@ Aanbeveling op basis van producten die een promo hebben.
 Het algoritme werkt op basis van previously recommended, viewed before en similars.
 Er worden dus aanbevelingen gedaan op basis van iemands gedrag.
 
-### [personal](webshop_voorbeeldshop_v1b_groep-7/recom_functions/recom_personal.py) recommendation:
+### [personal](recom_functions/recom_personal.py) recommendation:
 De aanbeveling werkt op basis van iemands persona. 
 Er wordt hier gekeken naar segment in combinatie met previously recommended, viewed before en similars.
