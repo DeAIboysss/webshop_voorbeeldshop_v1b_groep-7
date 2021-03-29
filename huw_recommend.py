@@ -1,3 +1,5 @@
+import ast
+
 from flask import Flask, request, session, render_template, redirect, url_for, g
 from flask_restful import Api, Resource, reqparse
 import os
@@ -38,6 +40,8 @@ class Recom(Resource):
         # randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
         # prodids = list(map(lambda x: x['_id'], list(randcursor)))
         #prodids = recom_2(con,cur)
+        session_shoppingcart = session_shoppingcart.replace('[','').replace(']','')
+        session_shoppingcart = list(ast.literal_eval(session_shoppingcart))
         print(session_shoppingcart)
         con, cur = connection('opdracht2_final', 'kip12345')
         if recom_code == 2:
@@ -58,4 +62,4 @@ class Recom(Resource):
 
 # This method binds the Recom class to the REST API, to parse specifically
 # requests in the format described below.
-api.add_resource(Recom, "/<string:profileid>/<int:count>/<int:recom_code>/<list:session_shoppingcart>")
+api.add_resource(Recom, "/<string:profileid>/<int:count>/<int:recom_code>/<string:session_shoppingcart>")

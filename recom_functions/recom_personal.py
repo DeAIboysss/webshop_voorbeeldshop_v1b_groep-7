@@ -20,6 +20,7 @@ def create_content_recommendation_table(colmn, value, order):
     :param order: The order the products are filtered i, this an be on ID or on selling_price or in every toher colmn name
     :return: A created table in pgadmin
     """
+
     sql = []
     cur.execute("""CREATE TABLE IF NOT EXISTS recommendation_%s 
                     (id VARCHAR PRIMARY KEY,

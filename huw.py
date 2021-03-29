@@ -218,6 +218,11 @@ class HUWebshop(object):
         packet['profile_id'] = session['profile_id']
         packet['shopping_cart'] = session['shopping_cart']
         packet['shopping_cart_count'] = self.shoppingcartcount()
+        content={
+            'r_products': self.recommendations(4, 2, session['shopping_cart']),
+            'r_type': list(self.recommendationtypes.keys())[0],
+            'r_string': list(self.recommendationtypes.values())[0]
+        }
         return render_template(template, packet=packet)
 
     """ ..:: Recommendation Functions ::.. """

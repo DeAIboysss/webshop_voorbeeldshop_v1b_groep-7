@@ -6,6 +6,12 @@ import datetime
 
 
 def wipecollaborationfilter(cur,con):
+    """
+
+    :param cur:
+    :param con:
+    :return:
+    """
     cur.execute('DROP TABLE IF EXISTS collaborationfilter; CREATE TABLE collaborationfilter(product_id varchar(255),segment varchar(255))')
     con.commit()
 
@@ -31,9 +37,11 @@ def collaborativefilter(nieuwesegments:bool,con,cur):
 
     segmentdict = {}
 
-    cur.execute('SELECT previously_recommended.productid as product_id,profile.segment FROM profile '
-                'INNER JOIN previously_recommended ON profileprofile_id = profile.profile_id '
-                'WHERE profile.segment is not null ')
+    cur.execute('''SELECT previously_recommended.productid as product_id,profile.segment FROM profile 
+                INNER JOIN previously_recommended ON profileprofile_id = profile.profile_id
+                INNER JOIN similars ON similars.profileprofile_id = profile.profile_id
+                INNER JOIN viewed_before ON viewed_before.profileprofile_id = profile.profile_id 
+                WHERE profile.segment is not null ''')
     products = cur.fetchall()
 
 

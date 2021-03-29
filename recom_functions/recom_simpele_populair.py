@@ -115,7 +115,7 @@ def read_meest_verkocht(con,cur):
     con.close()
     ids = str(records[0][1])
     split = ids.split(',')
-    print('simple algoritme')
+    #print('simple algoritme')
     return split
 
 #con.commit()
