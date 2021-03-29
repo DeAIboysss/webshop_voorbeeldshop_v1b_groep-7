@@ -38,7 +38,7 @@ def wipecontentfilter():
 
 
 def wipecollaborationfilter():
-    cur.execute('DROP TABLE IF EXISTS collaborationfilter; CREATE TABLE collaborationfilter(product_id varchar(255),segment varchar(255))')
+    cur.execute('DROP TABLE IF EXISTS collaborative_recommendations_behaviour; CREATE TABLE collaborative_recommendations_behaviour(product_id varchar(255),segment varchar(255))')
     con.commit()
 
 
@@ -99,9 +99,11 @@ def collaborativefilter(nieuwesegments:bool):
 
     segmentdict = {}
 
-    cur.execute('SELECT previously_recommended.productid as product_id,profile.segment FROM profile '
-                'INNER JOIN previously_recommended ON profileprofile_id = profile.profile_id '
-                'WHERE profile.segment is not null ')
+    cur.execute('''SELECT previously_recommended.productid as product_id,profile.segment FROM profile 
+                INNER JOIN previously_recommended ON profileprofile_id = profile.profile_id
+                INNER JOIN similars ON similars.profileprofile_id = profile.profile_id
+                INNER JOIN viewed_before ON viewed_before.profileprofile_id = profile.profile_id 
+                WHERE profile.segment is not null ''')
     products = cur.fetchall()
 
 
@@ -145,7 +147,7 @@ def collaborativefilter(nieuwesegments:bool):
         data.append((highestfreq2[0],segment))
         data.append((highestfreq3[0],segment))
 
-        cur.executemany('INSERT INTO collaborationfilter VALUES(%s,%s)',data)
+        cur.executemany('INSERT INTO collaborative_recommendations_behaviour VALUES(%s,%s)',data)
         con.commit()
 
 
@@ -154,7 +156,7 @@ def main():
     '''driver code'''
     time0 = datetime.datetime.now()
     connect()
-    contentfilter(True)
+    #contentfilter(True)
     collaborativefilter(True)
     close()
     print(datetime.datetime.now()-time0)

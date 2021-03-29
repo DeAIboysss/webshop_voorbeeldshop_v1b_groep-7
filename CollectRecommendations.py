@@ -43,7 +43,7 @@ def collect_contentfilter(profileid):
     else:
         segment = segment.lower()
 
-    cur.execute("SELECT product_id FROM collaborationfilter WHERE segment = '%s'"%(segment))
+    cur.execute("SELECT product_id FROM collaborative_recommendations_behaviour WHERE segment = '%s'"%(segment))
     product_ids = cur.fetchall()
     for i in list(product_ids):
         product_ids2.append(i[0])
@@ -54,8 +54,8 @@ def main():
     '''driver code'''
     time0 = datetime.datetime.now()
     connect()
-    collect_contentfilter('59dce306a56ac6edb4c12838')
-    collect_contentfilter('59dce303a56ac6edb4c10fcf')
+    print(collect_contentfilter('59dce306a56ac6edb4c12838'))
+    print(collect_contentfilter('59dce303a56ac6edb4c10fcf'))
 
     close()
     print(datetime.datetime.now()-time0)

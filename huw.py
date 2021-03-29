@@ -235,6 +235,7 @@ class HUWebshop(object):
             querycursor = self.database.products.find(queryfilter, self.productfields)
             resultlist = list(map(self.prepproduct, list(querycursor)))
             return resultlist
+
         return []
 
     """ ..:: Full Page Endpoints ::.. """
