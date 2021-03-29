@@ -73,7 +73,7 @@ def insert_into_tables(base_name, lst_recoms):
     print(base_name)
     print(lst_recoms)
 
-    cur.execute("INSERT INTO collaborative_recommendations_top4 VALUES ('%s', '%s');" % (base_name, lst_recoms))
+    cur.execute("INSERT INTO collaborative_recommendations_popular VALUES ('%s', '%s');" % (base_name, lst_recoms))
 
 
 def insert_different_tables():
@@ -109,12 +109,13 @@ def read_meest_verkocht(con,cur):
     """
     con = con
     cur = cur
-    cur.execute("SELECT * FROM collaborative_recommendations_top4 WHERE recom_basis = 'meest_verkocht'")
+    cur.execute("SELECT * FROM collaborative_recommendations_popular WHERE recom_basis = 'meest_verkocht'")
     records = cur.fetchall()
     cur.close()
     con.close()
     ids = str(records[0][1])
     split = ids.split(',')
+    print('simple algoritme')
     return split
 
 #con.commit()

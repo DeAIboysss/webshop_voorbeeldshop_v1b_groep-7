@@ -74,7 +74,7 @@ def get_highest_key(array:list):
             dict_count[array] += 1
     return max(dict_count, key=dict_count.get)
 
-def get_most_used_bases(profile_id:str):
+def get_most_used_bases(profile_id:str,con,cur):
     """
     This funciton scans the given profile for all the viewed products and gets the inputted colmn values from these products.
     These values are called base_1 and base_2,
@@ -136,7 +136,7 @@ def get_simmilar_profiles(profile_id:str,con,cur):
     """
     con = con
     cur = cur
-    record_2, record_1, own_viewed = get_most_used_bases(profile_id)
+    record_2, record_1, own_viewed = get_most_used_bases(profile_id,con,cur)
     if record_1 == None or record_2 == None:
         return None
     record_2 = record_2.replace("'", "''")
