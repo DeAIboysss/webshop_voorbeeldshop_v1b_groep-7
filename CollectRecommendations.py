@@ -2,44 +2,30 @@ from pymongo import MongoClient
 import psycopg2
 from random import randint
 import datetime
-
-def connect():
-    '''opens connection with database'''
-    global client
-    global database
-    global db_profiles
-    global con
-    global cur
-
-    client = MongoClient()
-    database = client.huwebshop
-
-    db_profiles = database.profiles.find()
-
-    con = psycopg2.connect(
-        host="localhost",
-        database="huwebshop",
-        user="postgres",
-        password="Vicecity_007",
-    )
-    cur = con.cursor()
+import connect
 
 
-def close():
+
+def close(con,cur):
     '''closes connection with database'''
-    global cur
-    global con
+
     cur.close()
     con.close()
 
-def collect_contentfilter(profileid):
+def collect_contentfilter(profileid,cur):
+    '''
 
+    :param profileid: profile id
+    :param cur: cursor used to iterate over items in database
+    :param con: connection to database
+    :return: product ids
+    '''
     product_ids2 = []
     cur.execute("SELECT segment FROM profile WHERE profile_id = '%s'"%(profileid))
     segment = cur.fetchall()
     segment = list(segment)[0][0]
-    if type(segment) == type(None):
-        segment = 'leaver'
+    if type(segment) == type(None) or segment == 'bouncer' or segment == 'leaver':
+        segment = 'buyer'
     else:
         segment = segment.lower()
 
@@ -53,11 +39,11 @@ def collect_contentfilter(profileid):
 def main():
     '''driver code'''
     time0 = datetime.datetime.now()
-    connect()
-    print(collect_contentfilter('59dce306a56ac6edb4c12838'))
-    print(collect_contentfilter('59dce303a56ac6edb4c10fcf'))
+    con,cur =connect.connection()
+    print(collect_contentfilter('59dce306a56ac6edb4c12838',cur))
+    print(collect_contentfilter('59dce303a56ac6edb4c10fcf',cur))
 
-    close()
+    close(con,cur)
     print(datetime.datetime.now()-time0)
 
 
