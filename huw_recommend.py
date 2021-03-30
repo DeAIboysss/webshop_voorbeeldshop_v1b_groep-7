@@ -24,9 +24,9 @@ load_dotenv()
 # else:
 client = MongoClient()
 database = client.huwebshop 
-from recom_functions.recom_personal import get_simmilar_profiles as recom_1
-from recom_functions.recom_simpele_populair import read_meest_verkocht as simple_recom
-from recom_functions.recom_behaviour import collect_contentfilter as recom_3
+from recom_functions.recom_personal import get_simmilar_profiles as recom_personal
+from recom_functions.recom_simpele_populair import read_meest_verkocht as recom_simple
+from recom_functions.recom_behaviour import collect_contentfilter as recom_behaviour
 from recom_functions.connect import connection
 
 class Recom(Resource):
@@ -40,19 +40,25 @@ class Recom(Resource):
         # randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
         # prodids = list(map(lambda x: x['_id'], list(randcursor)))
         #prodids = recom_2(con,cur)
-        session_shoppingcart = session_shoppingcart.replace('[','').replace(']','')
-        session_shoppingcart = list(ast.literal_eval(session_shoppingcart))
-        print(session_shoppingcart)
+        #print(session_shoppingcart)
         con, cur = connection('opdracht2_final', 'kip12345')
+        if session_shoppingcart != '[]':
+            session_shoppingcart = session_shoppingcart.replace('[','').replace(']','')
+            session_shoppingcart = list(ast.literal_eval(session_shoppingcart))
+            print(session_shoppingcart)
+        #else:
+        #     #prodids = simple_recom(con, cur)
+        #     print(session_shoppingcart)
+
         if recom_code == 2:
-            prodids = recom_1(profileid, con, cur)
+            prodids = recom_personal(profileid, con, cur)
         elif recom_code == 4:
-            prodids = recom_3(profileid,cur,con)
+            prodids = recom_behaviour(profileid, cur, con)
         elif recom_code == 6:
-            prodids = simple_recom(con, cur) #toekomstig komt hier aanbieding
+            prodids = recom_simple(con, cur) #toekomstig komt hier aanbieding
 
         if prodids == None:# als 1 van de recommendations niks terug geeft dan komt de simpele in werking.
-            prodids = simple_recom(con, cur)
+            prodids = recom_simple(con, cur)
 
         cur.close()
         con.close()
