@@ -31,14 +31,14 @@ class Recom(Resource):
     the webshop. At the moment, the API simply returns a random set of products
     to recommend."""
 
-    def get(self, profileid, count):
+    def get(self, profileid, count): # recom_code
         """ This function represents the handler for GET requests coming in
         through the API. It currently returns a random sample of products. """
         # randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
         # prodids = list(map(lambda x: x['_id'], list(randcursor)))
 
-        # prodids = read_meest_verkocht()
-        prodids = read_meest_verkocht()
+        # prodids = read_aanbiedingen(con, cur, 6)
+        prodids = read_meest_verkocht() # (con, cur, 2)
 
         print(prodids, flush=True)
 

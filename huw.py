@@ -58,7 +58,7 @@ class HUWebshop(object):
                 self.recseraddress = envdict["RECOMADDRESS"]
         else:
             self.client = MongoClient()
-        self.database = self.client.huwebshop 
+        self.database = self.client.huwebshop
 
         # Once we have a connection to the database, we check to see whether it
         # has a category index prepared; if not, we have a function to make it.
