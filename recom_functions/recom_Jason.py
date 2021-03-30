@@ -55,7 +55,7 @@ def create_new_table(recom_basis):
     #cur.execute("DROP TABLE IF EXISTS collaborative_recommendations;")
 
 
-    cur.execute("""CREATE TABLE IF NOT EXISTS collaborative_recommendations
+    cur.execute("""CREATE TABLE IF NOT EXISTS collaborative_recommendations_popular
                             (recom_basis VARCHAR,lst_product_id VARCHAR);""")
     con.commit()
 
@@ -91,7 +91,7 @@ def insert_into_tables(base_name, lst_recoms):
     print(base_name)
     print(lst_recoms)
 
-    cur.execute("INSERT INTO collaborative_recommendations VALUES ('%s', '%s');" % (base_name, lst_recoms))
+    cur.execute("INSERT INTO collaborative_recommendations_popular VALUES ('%s', '%s');" % (base_name, lst_recoms))
 
 
 def insert_different_tables():
@@ -129,7 +129,7 @@ def read_meest_verkocht():
             :return split: A list with product id's.
     """
     con = database_connection()
-    sql = "SELECT * FROM collaborative_recommendations WHERE recom_basis = 'meest_verkocht';"
+    sql = "SELECT * FROM collaborative_recommendations_popular WHERE recom_basis = 'meest_verkocht';"
     records = select_data(sql)
     ids = str(records[0][1])
 
