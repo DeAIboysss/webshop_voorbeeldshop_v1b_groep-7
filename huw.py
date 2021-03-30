@@ -33,7 +33,7 @@ class HUWebshop(object):
 
     productfields = ["name", "price.selling_price", "properties.discount", "images"]
 
-    recommendationtypes = {'popular':"Anderen kochten ook",'similar':"Soortgelijke producten",'combination':'Combineert goed met','behaviour':'Passend bij uw gedrag','personal':'Persoonlijk aanbevolen'}
+    recommendationtypes = {'popular':"Anderen kochten ook",'similar':"Soortgelijke producten",'combination':'Combineert goed met','behaviour':'Passend bij uw gedrag','personal':'Persoonlijk aanbevolen',',meestverkocht':'De top 4 meest verkochte producten:'}
 
     """ ..:: Initialization and Category Index Functions ::.. """
 
@@ -218,11 +218,10 @@ class HUWebshop(object):
         packet['profile_id'] = session['profile_id']
         packet['shopping_cart'] = session['shopping_cart']
         packet['shopping_cart_count'] = self.shoppingcartcount()
-        content={
-            'r_products': self.recommendations(4, 2, session['shopping_cart']),
-            'r_type': list(self.recommendationtypes.keys())[0],
-            'r_string': list(self.recommendationtypes.values())[0]
-        }
+        if template =="homepage.html":
+            packet['r_products'] = self.recommendations(4, 8, session['shopping_cart'])
+            packet['r_type']= list(self.recommendationtypes.keys())[5]
+            packet['r_string'] = list(self.recommendationtypes.values())[5]
         return render_template(template, packet=packet)
 
     """ ..:: Recommendation Functions ::.. """
@@ -233,6 +232,7 @@ class HUWebshop(object):
         service. At the moment, it only transmits the profile ID and the number
         of expected recommendations; to have more user information in the REST
         request, this function would have to change."""
+
         resp = requests.get(self.recseraddress+"/"+session['profile_id']+"/"+str(count)+"/"+str(recom_code)+"/"+str(dicts_session))
         if resp.status_code == 200:
             recs = eval(resp.content.decode())

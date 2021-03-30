@@ -5,8 +5,8 @@ def collect_contentfilter(profileid,cur,con):
     cur.execute("SELECT segment FROM profile WHERE profile_id = '%s'"%(profileid))
     segment = cur.fetchall()
     segment = list(segment)[0][0]
-    if type(segment) == type(None):
-        segment = 'leaver'
+    if type(segment) == type(None) or segment == 'bouncer' or segment == 'leaver':
+        segment = 'buyer'
     else:
         segment = segment.lower()
 

@@ -27,6 +27,7 @@ database = client.huwebshop
 from recom_functions.recom_personal import get_simmilar_profiles as recom_personal
 from recom_functions.recom_simpele_populair import read_meest_verkocht as recom_simple
 from recom_functions.recom_behaviour import collect_contentfilter as recom_behaviour
+from recom_functions.recom_aanbeidng import read_aanbiedingen as recom_aanbieing
 from recom_functions.connect import connection
 
 class Recom(Resource):
@@ -51,14 +52,17 @@ class Recom(Resource):
         #     print(session_shoppingcart)
 
         if recom_code == 2:
-            prodids = recom_personal(profileid, con, cur)
-        elif recom_code == 4:
-            prodids = recom_behaviour(profileid, cur, con)
+            prodids = recom_personal(profileid,con, cur)
+            if prodids == None:
+                prodids = recom_behaviour(profileid,con,cur)
         elif recom_code == 6:
-            prodids = recom_simple(con, cur) #toekomstig komt hier aanbieding
+            prodids = recom_aanbieing(con, cur,session_shoppingcart) #toekomstig komt hier aanbieding
+
+        elif recom_code == 8:
+            prodids = recom_simple(con,cur)
 
         if prodids == None:# als 1 van de recommendations niks terug geeft dan komt de simpele in werking.
-            prodids = recom_simple(con, cur)
+            prodids = recom_simple(con,cur)
 
         cur.close()
         con.close()
