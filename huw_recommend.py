@@ -53,16 +53,21 @@ class Recom(Resource):
 
         if recom_code == 2:
             prodids = recom_personal(profileid,con, cur)
+            print('personal',prodids)
             if prodids == None:
-                prodids = recom_behaviour(profileid,con,cur)
+                prodids = recom_behaviour(profileid,cur)
+                print('behaviour', prodids)
         elif recom_code == 6:
             prodids = recom_aanbieing(con, cur,session_shoppingcart) #toekomstig komt hier aanbieding
+            print('aanbieding', prodids)
 
         elif recom_code == 8:
             prodids = recom_simple(con,cur)
+            print('simpel', prodids)
 
         if prodids == None:# als 1 van de recommendations niks terug geeft dan komt de simpele in werking.
             prodids = recom_simple(con,cur)
+            print('replace_simpel', prodids)
 
         cur.close()
         con.close()

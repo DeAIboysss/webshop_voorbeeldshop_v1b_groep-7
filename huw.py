@@ -33,7 +33,7 @@ class HUWebshop(object):
 
     productfields = ["name", "price.selling_price", "properties.discount", "images"]
 
-    recommendationtypes = {'popular':"Anderen kochten ook",'similar':"Soortgelijke producten",'combination':'Combineert goed met','behaviour':'Passend bij uw gedrag','personal':'Persoonlijk aanbevolen',',meestverkocht':'De top 4 meest verkochte producten:'}
+    recommendationtypes = {'popular':"Anderen kochten ook",'similar':"Soortgelijke producten",'combination':'Combineert goed met','behaviour':'Passend bij uw gedrag','personal':'Persoonlijk aanbevolen','meestverkocht':'De top 4 meest verkochte producten:','aanbieding':'Maak uw aanbeiding compleet met:'}
 
     """ ..:: Initialization and Category Index Functions ::.. """
 
@@ -295,8 +295,8 @@ class HUWebshop(object):
             i.append(product)
         return self.renderpackettemplate('shoppingcart.html',{'itemsincart':i,\
             'r_products':self.recommendations(4,6,session['shopping_cart']), \
-            'r_type':list(self.recommendationtypes.keys())[2],\
-            'r_string':list(self.recommendationtypes.values())[2]})
+            'r_type':list(self.recommendationtypes.keys())[6],\
+            'r_string':list(self.recommendationtypes.values())[6]})
 
     def categoryoverview(self):
         """ This subpage shows all top-level categories in its main menu. """
