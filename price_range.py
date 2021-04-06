@@ -1,9 +1,15 @@
 import connect
 import datetime
-def getpricerange(percent,con,cur):
+def getpricerange(con,cur):
+    '''
+    :param con: connection with pgadmin used to commit
+    :param cur: cursor in pgadmin used to execute
+    :return: returns the ranges in tuples
+    '''
     cur.execute('SELECT selling_price FROM product')
     products = cur.fetchall()
     prices = []
+    percent = 10
     for product in products:
         if list(product)[0] != None:
            prices.append(list(product)[0])
@@ -21,15 +27,62 @@ def getpricerange(percent,con,cur):
             rangelist.append(prices[(l//percent)*i-1])
         if i != 100//percent:
             rangelist.append(prices[(l//percent)*i])
-    return rangelist
+    pricerange = []
+    for index in range(1,20,2):
+        pricerange.append((rangelist[index-1],rangelist[index]))
+    return pricerange
+
+def wipetablepricerange(con,cur):
+    cur.execute('DROP TABLE IF EXISTS collaborative_recommendations_pricerange; CREATE TABLE collaborative_recommendations_pricerange(price_cat varchar(255),id varchar(255))')
+    con.commit()
+
+def getcatandpricedata(pricerange,con,cur):
+    cur.execute('SELECT sub_sub_category, selling_price, id FROM product')
+    products = cur.fetchall()
+    sscatdict = {}
+    for sscat,price,id in products:
+        whichrange = 0
+        for prices in pricerange:
+            if type(price) != type(None):
+                if price < prices[1]:
+                    pricerangeproduct =whichrange
+                    break
+                if whichrange ==9:
+                    pricerangeproduct = 9
+                whichrange +=1
+        sp =str(sscat)+'_'+str(pricerangeproduct)
+        if sp in sscatdict:
+            if len(sscatdict[sp]) <4:
+                sscatdict[sp].append(id)
+        else:
+            sscatdict[sp] = [id]
+
+    removekeys = []
+    for key in sscatdict.keys():
+        if len(sscatdict[key]) !=4:
+            removekeys.append(key)
+
+
+    for key in removekeys:
+        sscatdict.pop(key)
+    instertproof =[]
+    for key, value in sscatdict.items():
+        instertproof.append((key,str(value[0])+','+str(value[1])+','+str(value[2])+','+str(value[3])))
+
+    return instertproof
+def insertpriceclass(datapriceclass,con,cur):
+    cur.executemany('INSERT INTO collaborative_recommendations_pricerange VALUES(%s,%s);',datapriceclass)
+    con.commit()
 
 def main():
 
     con,cur = connect.connection()
     time0=datetime.datetime.now()
-    var = getpricerange(10,con,cur)
-    for i in range(0,len(var),2):
-        print(var[i],var[i+1])
+    wipetablepricerange(con,cur)
+    pricerange = getpricerange(con,cur)
+    print(pricerange)
+    datapriceclass = getcatandpricedata(pricerange,con,cur)
+    insertpriceclass(datapriceclass,con,cur)
     print(datetime.datetime.now()-time0)
     cur.close()
     con.close()
