@@ -70,6 +70,7 @@ def getcatandpricedata(pricerange,con,cur):
         instertproof.append((key,str(value[0])+','+str(value[1])+','+str(value[2])+','+str(value[3])))
 
     return instertproof
+
 def insertpriceclass(datapriceclass,con,cur):
     cur.executemany('INSERT INTO collaborative_recommendations_pricerange VALUES(%s,%s);',datapriceclass)
     con.commit()
@@ -80,7 +81,6 @@ def main():
     time0=datetime.datetime.now()
     wipetablepricerange(con,cur)
     pricerange = getpricerange(con,cur)
-    print(pricerange)
     datapriceclass = getcatandpricedata(pricerange,con,cur)
     insertpriceclass(datapriceclass,con,cur)
     print(datetime.datetime.now()-time0)

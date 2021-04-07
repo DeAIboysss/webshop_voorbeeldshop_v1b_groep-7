@@ -24,10 +24,12 @@ def collect_contentfilter(profileid,cur):
     cur.execute("SELECT segment FROM profile WHERE profile_id = '%s'"%(profileid))
     segment = cur.fetchall()
     segment = list(segment)[0][0]
+    if type(segment) != type(None):
+        segment = segment.lower()
+        print(segment)
     if type(segment) == type(None) or segment == 'bouncer' or segment == 'leaver':
         segment = 'buyer'
-    else:
-        segment = segment.lower()
+        print(segment)
 
     cur.execute("SELECT product_id FROM collaborative_recommendations_behaviour WHERE segment = '%s'"%(segment))
     product_ids = cur.fetchall()
