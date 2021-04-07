@@ -4,4 +4,3 @@ datasets/
 .flaskenv
 utilities/imageurls.csv
 .idea
-requirements.txt
