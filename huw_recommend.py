@@ -1,5 +1,3 @@
-import ast
-
 from flask import Flask, request, session, render_template, redirect, url_for, g
 from flask_restful import Api, Resource, reqparse
 import os
@@ -18,10 +16,6 @@ dbstring = 'mongodb+srv://{0}:{1}@{2}/test?retryWrites=true&w=majority'
 # add_resource method, we open the connection to the database outside of the 
 # Recom class.
 load_dotenv()
-# if os.getenv(envvals[0]) is not None:
-#     envvals = list(map(lambda x: str(os.getenv(x)), envvals))
-#     client = MongoClient(dbstring.format(*envvals))
-# else:
 client = MongoClient()
 database = client.huwebshop 
 from recom_functions.recom_personal import get_simmilar_profiles as recom_personal
@@ -30,6 +24,7 @@ from recom_functions.recom_behaviour import collect_contentfilter as recom_behav
 from recom_functions.recom_aanbiedng import read_aanbiedingen as recom_aanbieding
 from recom_functions.aanbieding2 import get_promo_products as recom_aanbieding2
 from recom_functions.connect import connection
+import ast #for sepperation of shopping cart tuple
 
 class Recom(Resource):
     """ This class represents the REST API that provides the recommendations for
@@ -37,21 +32,21 @@ class Recom(Resource):
     to recommend."""
 
     def get(self, profileid, count,recom_code,session_shoppingcart):
-        """ This function represents the handler for GET requests coming in
-        through the API. It currently returns a random sample of products. """
-        # randcursor = database.products.aggregate([{ '$sample': { 'size': count } }])
-        # prodids = list(map(lambda x: x['_id'], list(randcursor)))
-        #prodids = recom_2(con,cur)
-        #print(session_shoppingcart)
+        """
+        This function represents the handler for GET requests coming in
+        through the API.
+        :param profileid: The current profile id
+        :param count: The number of recommended products
+        :param recom_code: The code for witch recommendation is asked by the website
+        :param session_shoppingcart: The current content of the shopping cart
+        :return: the recommended products
+        """
         con, cur = connection('opdracht2_final', 'kip12345')
         if session_shoppingcart != '[]':
             session_shoppingcart = session_shoppingcart.replace('[','').replace(']','')
             session_shoppingcart = list(ast.literal_eval(session_shoppingcart))
             print(session_shoppingcart)
             print(type(session_shoppingcart),type(session_shoppingcart[0]),type(session_shoppingcart[1]))
-        #else:
-        #     #prodids = simple_recom(con, cur)
-        #     print(session_shoppingcart)
 
         if recom_code == 2:
             prodids = recom_personal(profileid,con, cur)
@@ -62,7 +57,7 @@ class Recom(Resource):
         elif recom_code == 6:
             prodids = recom_aanbieding2(session_shoppingcart,con,cur)
             if prodids == None:
-                prodids = recom_aanbieding(con, cur,session_shoppingcart) #toekomstig komt hier aanbieding
+                prodids = recom_aanbieding(con, cur,session_shoppingcart)
                 print('aanbieding', prodids)
             else:
                 print('aanbieding 2 succes', prodids)
