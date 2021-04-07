@@ -1,5 +1,0 @@
-Flask
-Pymongo
-Flask-RESTful
-Python-Dotenv
-Requests
