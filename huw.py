@@ -33,7 +33,7 @@ class HUWebshop(object):
 
     productfields = ["name", "price.selling_price", "properties.discount", "images"]
 
-    recommendationtypes = {'popular':"Anderen kochten ook",'similar':"Soortgelijke producten",'combination':'Combineert goed met','behaviour':'Passend bij uw gedrag','personal':'Persoonlijk aanbevolen','meestverkocht':'De top 4 meest verkochte producten:','aanbieding':'Maak uw aanbeiding compleet met:'}
+    recommendationtypes = {'popular':"Anderen kochten ook",'similar':"Soortgelijke producten",'combination':'Combineert goed met','behaviour':'Passend bij uw gedrag','personal':'Persoonlijk aanbevolen','meestverkocht':'De top 4 meest verkochte producten:','aanbieding':'Maak uw aanbieding compleet met:'}
 
     """ ..:: Initialization and Category Index Functions ::.. """
 

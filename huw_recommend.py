@@ -27,7 +27,8 @@ database = client.huwebshop
 from recom_functions.recom_personal import get_simmilar_profiles as recom_personal
 from recom_functions.recom_simpele_populair import read_meest_verkocht as recom_simple
 from recom_functions.recom_behaviour import collect_contentfilter as recom_behaviour
-from recom_functions.recom_aanbeidng import read_aanbiedingen as recom_aanbieing
+from recom_functions.recom_aanbiedng import read_aanbiedingen as recom_aanbieding
+from recom_functions.aanbieding2 import get_promo_products as recom_aanbieding2
 from recom_functions.connect import connection
 
 class Recom(Resource):
@@ -47,6 +48,7 @@ class Recom(Resource):
             session_shoppingcart = session_shoppingcart.replace('[','').replace(']','')
             session_shoppingcart = list(ast.literal_eval(session_shoppingcart))
             print(session_shoppingcart)
+            print(type(session_shoppingcart),type(session_shoppingcart[0]),type(session_shoppingcart[1]))
         #else:
         #     #prodids = simple_recom(con, cur)
         #     print(session_shoppingcart)
@@ -58,8 +60,12 @@ class Recom(Resource):
                 prodids = recom_behaviour(profileid,cur)
                 print('behaviour', prodids)
         elif recom_code == 6:
-            prodids = recom_aanbieing(con, cur,session_shoppingcart) #toekomstig komt hier aanbieding
-            print('aanbieding', prodids)
+            prodids = recom_aanbieding2(session_shoppingcart,con,cur)
+            if prodids == None:
+                prodids = recom_aanbieding(con, cur,session_shoppingcart) #toekomstig komt hier aanbieding
+                print('aanbieding', prodids)
+            else:
+                print('aanbieding 2 succes', prodids)
 
         elif recom_code == 8:
             prodids = recom_simple(con,cur)

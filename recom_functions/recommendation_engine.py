@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import psycopg2
 from random import randint
 import datetime
-from recom_functions.connect import  connection as connect
+import connect
 
 
 def close(con,cur):
@@ -139,7 +139,7 @@ def collaborativefilter(nieuwesegments:bool,con,cur):
 def main():
     '''driver code'''
     time0 = datetime.datetime.now()
-    con,cur =connect('opdracht2_final', 'kip12345')
+    con,cur =connect('')
     #contentfilter(True)
     collaborativefilter(False,con,cur)
     close(con,cur)
