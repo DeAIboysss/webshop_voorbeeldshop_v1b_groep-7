@@ -33,7 +33,7 @@ class HUWebshop(object):
 
     productfields = ["name", "price.selling_price", "properties.discount", "images"]
 
-    recommendationtypes = {'popular':"Anderen kochten ook",'similar':"Soortgelijke producten",'combination':'Combineert goed met','behaviour':'Passend bij uw gedrag','personal':'Persoonlijk aanbevolen'}
+    recommendationtypes = {'popular':"Anderen kochten ook",'similar':"Soortgelijke producten",'combination':'Combineert goed met','behaviour':'Passend bij uw gedrag','personal':'Persoonlijk aanbevolen','meestverkocht':'De top 4 meest verkochte producten:','aanbieding':'Maak uw aanbieding compleet met:'}
 
     """ ..:: Initialization and Category Index Functions ::.. """
 
@@ -58,7 +58,7 @@ class HUWebshop(object):
                 self.recseraddress = envdict["RECOMADDRESS"]
         else:
             self.client = MongoClient()
-        self.database = self.client.huwebshop
+        self.database = self.client.huwebshop 
 
         # Once we have a connection to the database, we check to see whether it
         # has a category index prepared; if not, we have a function to make it.
@@ -218,17 +218,22 @@ class HUWebshop(object):
         packet['profile_id'] = session['profile_id']
         packet['shopping_cart'] = session['shopping_cart']
         packet['shopping_cart_count'] = self.shoppingcartcount()
+        if template =="homepage.html":
+            packet['r_products'] = self.recommendations(4, 8, session['shopping_cart'])
+            packet['r_type']= list(self.recommendationtypes.keys())[5]
+            packet['r_string'] = list(self.recommendationtypes.values())[5]
         return render_template(template, packet=packet)
 
     """ ..:: Recommendation Functions ::.. """
 
-    def recommendations(self, count): # recom_code # => verwijst naar recommendation location
+    def recommendations(self, count,recom_code,dicts_session):
         """ This function returns the recommendations from the provided page
         and context, by sending a request to the designated recommendation
         service. At the moment, it only transmits the profile ID and the number
         of expected recommendations; to have more user information in the REST
         request, this function would have to change."""
-        resp = requests.get(self.recseraddress+"/"+session['profile_id']+"/"+str(count))
+
+        resp = requests.get(self.recseraddress+"/"+session['profile_id']+"/"+str(count)+"/"+str(recom_code)+"/"+str(dicts_session))
         if resp.status_code == 200:
             recs = eval(resp.content.decode())
             queryfilter = {"_id": {"$in": recs}}
@@ -266,7 +271,7 @@ class HUWebshop(object):
             'pend': skipindex + session['items_per_page'] if session['items_per_page'] > 0 else prodcount, \
             'prevpage': pagepath+str(page-1) if (page > 1) else False, \
             'nextpage': pagepath+str(page+1) if (session['items_per_page']*page < prodcount) else False, \
-            'r_products':self.recommendations(4), \
+            'r_products':self.recommendations(4,2,session['shopping_cart']), \
             'r_type':list(self.recommendationtypes.keys())[0],\
             'r_string':list(self.recommendationtypes.values())[0]\
             })
@@ -277,7 +282,7 @@ class HUWebshop(object):
         product = self.database.products.find_one({"_id":str(productid)})
         return self.renderpackettemplate('productdetail.html', {'product':product,\
             'prepproduct':self.prepproduct(product),\
-            'r_products':self.recommendations(4), \
+            'r_products':self.recommendations(4,6,session['shopping_cart']), \
             'r_type':list(self.recommendationtypes.keys())[1],\
             'r_string':list(self.recommendationtypes.values())[1]})
 
@@ -289,9 +294,9 @@ class HUWebshop(object):
             product["itemcount"] = tup[1]
             i.append(product)
         return self.renderpackettemplate('shoppingcart.html',{'itemsincart':i,\
-            'r_products':self.recommendations(4), \
-            'r_type':list(self.recommendationtypes.keys())[2],\
-            'r_string':list(self.recommendationtypes.values())[2]})
+            'r_products':self.recommendations(4,6,session['shopping_cart']), \
+            'r_type':list(self.recommendationtypes.keys())[6],\
+            'r_string':list(self.recommendationtypes.values())[6]})
 
     def categoryoverview(self):
         """ This subpage shows all top-level categories in its main menu. """
