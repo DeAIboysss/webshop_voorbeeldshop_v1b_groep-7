@@ -40,6 +40,7 @@ class Recom(Resource):
         :param count: The number of recommended products
         :param recom_code: The code for witch recommendation is asked by the website
         :param session_shoppingcart: The current content of the shopping cart
+        :param currentPID: Geeft een product id terug van huidige pagina, waarde 0 betekent niet op een product pagina aanwezig
         :return: the recommended products
         """
         con, cur = connection('opdracht2_final', 'kip12345')
