@@ -16,19 +16,6 @@ def create_new_table(con, cur):
 create_new_table(con, cur)
 
 
-def select_data(sql):
-    """
-    Reads a query and returns the rows of the selected data.
-
-        :param sql: A list with queries as strings.
-        :return: A list with records as tuples.
-    """
-    cur.execute(sql)
-    records = cur.fetchall()
-
-    return records
-
-
 def insert_into_tables(base_name, lst_recoms):
     """
     Inserts data from insert_different_tables and inserts it in the right columns etc.
@@ -50,7 +37,8 @@ def insert_different_tables():
                 GROUP BY product_id
                 ORDER BY aantal DESC LIMIT 4;"""
 
-    records = select_data(sql)
+    cur.execute(sql)
+    records = cur.fetchall()
     recoms = []
 
     for record in records:
