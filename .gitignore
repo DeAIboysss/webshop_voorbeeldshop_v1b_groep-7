@@ -2,5 +2,6 @@ __pycache__/
 datasets/
 .env
 .flaskenv
-utilities/imageurls.csv
 .idea
+database.dll
+utilities/imageurls.csv
