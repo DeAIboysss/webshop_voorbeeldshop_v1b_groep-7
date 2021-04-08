@@ -1,3 +1,8 @@
+import datetime
+
+from recom_functions import connect
+
+
 def getpricerange(con,cur):
     '''
     :param con: connection with pgadmin used to commit
@@ -9,8 +14,10 @@ def getpricerange(con,cur):
     prices = []
     percent = 10
     for product in products:
+        #print(type(list(product)[0]))
         if list(product)[0] != None:
-           prices.append(list(product)[0])
+            if list(product)[0] != 0:
+                prices.append(list(product)[0])
     lengte =0
     for i in prices:
         if i == 0:
@@ -26,6 +33,8 @@ def getpricerange(con,cur):
         if i != 100//percent:
             rangelist.append(prices[(l//percent)*i])
     pricerange = []
+    # if rangelist[0] == 0:
+    #     rangelist[0] = 1
     for index in range(1,20,2):
         pricerange.append((rangelist[index-1],rangelist[index]))
     return pricerange
@@ -78,3 +87,18 @@ def insertpriceclass(datapriceclass,con,cur):
     """
     cur.executemany('INSERT INTO collaborative_recommendations_pricerange VALUES(%s,%s);',datapriceclass)
     con.commit()
+
+def main():
+
+    con,cur = connect.connection('opdracht2_final', 'kip12345')
+    time0=datetime.datetime.now()
+    wipetablepricerange(con,cur)
+    pricerange = getpricerange(con,cur)
+    datapriceclass = getcatandpricedata(pricerange,con,cur)
+    insertpriceclass(datapriceclass,con,cur)
+    print(datetime.datetime.now()-time0)
+    cur.close()
+    con.close()
+
+if __name__ == '__main__':
+    main()

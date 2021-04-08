@@ -30,8 +30,12 @@ def collect_pricerangefilter(productid,con,cur):
             whichrange +=1
 
     sscat_pricerange = str(sscat) + '_' + str(pricerangeproduct)
-
+    print(sscat_pricerange)
     cur.execute("SELECT id FROM collaborative_recommendations_pricerange WHERE price_cat = '%s'"% sscat_pricerange)
     product_ids = cur.fetchall()
-    product_ids = product_ids[0][0].split(',')
+
+    if product_ids != []:
+        product_ids = product_ids[0][0].split(',')
+    else:
+        product_ids = None
     return product_ids
