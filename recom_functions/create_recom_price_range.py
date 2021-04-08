@@ -1,6 +1,6 @@
-import datetime
-
-from recom_functions import connect
+# import datetime
+#
+# from recom_functions import connect
 
 
 def getpricerange(con,cur):
@@ -88,17 +88,17 @@ def insertpriceclass(datapriceclass,con,cur):
     cur.executemany('INSERT INTO collaborative_recommendations_pricerange VALUES(%s,%s);',datapriceclass)
     con.commit()
 
-def main():
-
-    con,cur = connect.connection('opdracht2_final', 'kip12345')
-    time0=datetime.datetime.now()
-    wipetablepricerange(con,cur)
-    pricerange = getpricerange(con,cur)
-    datapriceclass = getcatandpricedata(pricerange,con,cur)
-    insertpriceclass(datapriceclass,con,cur)
-    print(datetime.datetime.now()-time0)
-    cur.close()
-    con.close()
-
-if __name__ == '__main__':
-    main()
+# def main():
+#
+#     con,cur = connect.connection('opdracht2_final', 'kip12345')
+#     time0=datetime.datetime.now()
+#     wipetablepricerange(con,cur)
+#     pricerange = getpricerange(con,cur)
+#     datapriceclass = getcatandpricedata(pricerange,con,cur)
+#     insertpriceclass(datapriceclass,con,cur)
+#     print(datetime.datetime.now()-time0)
+#     cur.close()
+#     con.close()
+#
+# if __name__ == '__main__':
+#     main()

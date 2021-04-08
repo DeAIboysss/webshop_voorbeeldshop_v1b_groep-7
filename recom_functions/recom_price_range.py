@@ -17,7 +17,7 @@ def collect_pricerangefilter(productid,con,cur):
     cur.execute("SELECT sub_sub_category, selling_price FROM product WHERE id = '%s'"%(productid))
 
     sscat,price = cur.fetchall()[0]
-    price = 0
+    #price = 0
     pricerange = getpricerange(con,cur)
     whichrange = 0
     for prices in pricerange:
