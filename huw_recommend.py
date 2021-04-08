@@ -46,7 +46,7 @@ class Recom(Resource):
             session_shoppingcart = session_shoppingcart.replace('[','').replace(']','')
             session_shoppingcart = list(ast.literal_eval(session_shoppingcart))
             print(session_shoppingcart)
-            print(type(session_shoppingcart),type(session_shoppingcart[0]),type(session_shoppingcart[1]))
+            #print(type(session_shoppingcart),type(session_shoppingcart[0]),type(session_shoppingcart[1]))
 
         if recom_code == 2:
             prodids = recom_personal(profileid,con, cur)
@@ -55,12 +55,14 @@ class Recom(Resource):
                 prodids = recom_behaviour(profileid,cur)
                 print('behaviour', prodids)
         elif recom_code == 6:
-            prodids = recom_aanbieding2(session_shoppingcart,con,cur)
-            if prodids == None:
-                prodids = recom_aanbieding(con, cur,session_shoppingcart)
-                print('aanbieding', prodids)
-            else:
-                print('aanbieding 2 succes', prodids)
+            if session_shoppingcart != '[]':
+                prodids = recom_aanbieding2(session_shoppingcart,con,cur)
+                if prodids == None:
+                    prodids = recom_aanbieding(con, cur,session_shoppingcart)
+                    print('aanbieding', prodids)
+                else:
+                    print('aanbieding 2 succes', prodids)
+
 
         elif recom_code == 8:
             prodids = recom_simple(con,cur)
