@@ -17,13 +17,15 @@ dbstring = 'mongodb+srv://{0}:{1}@{2}/test?retryWrites=true&w=majority'
 # Recom class.
 load_dotenv()
 client = MongoClient()
-database = client.huwebshop 
+database = client.huwebshop
+
 from recom_functions.recom_personal import get_simmilar_profiles as recom_personal
-from recom_functions.recom_simpele_populair import read_meest_verkocht as recom_simple
+from recom_functions.recom_simple_popular import read_meest_verkocht as recom_simple
 from recom_functions.recom_behaviour import collect_contentfilter as recom_behaviour
-from recom_functions.recom_aanbiedng import read_aanbiedingen as recom_aanbieding
-from recom_functions.aanbieding2 import get_promo_products as recom_aanbieding2
+from recom_functions.recom_aanbiedingen_4_1 import read_aanbiedingen as recom_aanbieding
+from recom_functions.recom_aanbeidingen_4_2 import get_promo_products as recom_aanbieding2
 from recom_functions.connect import connection
+from recom_functions.recom_price_range import collect_pricerangefilter as recom_similars
 import ast #for sepperation of shopping cart tuple
 
 class Recom(Resource):
@@ -31,7 +33,7 @@ class Recom(Resource):
     the webshop. At the moment, the API simply returns a random set of products
     to recommend."""
 
-    def get(self, profileid, count,recom_code,session_shoppingcart):
+    def get(self, profileid, count,recom_code,session_shoppingcart,curentPID):
         """
         This function represents the handler for GET requests coming in
         through the API.
@@ -54,6 +56,8 @@ class Recom(Resource):
             if prodids == None:
                 prodids = recom_behaviour(profileid,cur)
                 print('behaviour', prodids)
+        elif recom_code == 4:
+           prodids = recom_similars(curentPID,con,cur)
         elif recom_code == 6:
             if session_shoppingcart != '[]':
                 prodids = recom_aanbieding2(session_shoppingcart,con,cur)
@@ -80,4 +84,4 @@ class Recom(Resource):
 
 # This method binds the Recom class to the REST API, to parse specifically
 # requests in the format described below.
-api.add_resource(Recom, "/<string:profileid>/<int:count>/<int:recom_code>/<string:session_shoppingcart>")
+api.add_resource(Recom, "/<string:profileid>/<int:count>/<int:recom_code>/<string:session_shoppingcart>/<string:curentPID>")
