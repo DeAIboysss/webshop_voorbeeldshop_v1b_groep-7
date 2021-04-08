@@ -1,7 +1,7 @@
 from .connect import connection
 con, cur = connection("huwebshop", "admin")
-#======================================= CREATE TABLES:
-def create_new_table(recom_basis):
+#======================================= CREATE TABLE:
+def create_new_table():
     """
     Creates a new table with products
         :param table: A string that represents the name of the recom base.
@@ -66,5 +66,3 @@ def read_aanbiedingen(con,cur):
     ids = str(records[0][1])
     split = ids.split(',')
     return split
-
-#con.commit()

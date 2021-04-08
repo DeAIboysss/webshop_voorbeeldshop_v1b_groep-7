@@ -60,7 +60,7 @@ def select_combinations():
 
 #select_combinations()
 
-#======================================= CREATE TABLES:
+#======================================= CREATE TABLE:
 def create_new_table():
     """
     Creates a new table with a recom base column and product id column.
@@ -114,4 +114,3 @@ def select_data_for_inserts():
                 recoms.append(record[0])
                 joined = ','.join(recoms)
             insert_into_tables(str(i), joined)
-
