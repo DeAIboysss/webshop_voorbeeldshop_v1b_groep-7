@@ -1,7 +1,8 @@
-# import datetime
-# from recom_functions.connect import connection
-# con, cur = connection('opdracht2_final', 'kip12345')
-# time0 = datetime.datetime.now()
+import datetime
+from connect import connection
+
+con, cur = connection("huwebshop", "admin")
+time0 = datetime.datetime.now()
 
 #======================================= CREATE TABLES:
 def create_new_table(recom_basis):
@@ -14,7 +15,7 @@ def create_new_table(recom_basis):
                             (recom_basis VARCHAR, lst_product_id VARCHAR);""")
     con.commit()
 
-#create_new_table("aanbieding")
+create_new_table("aanbieding")
 
 #======================================= SELECT AND INSERT DATA:
 def insert_into_tables(base_name, lst_recoms):
@@ -45,30 +46,31 @@ def insert_different_tables():
         recoms.append(record[0])
         joined = ','.join(recoms)
 
+    print(recoms)
+    print(joined)
+
     insert_into_tables("aanbieding", joined)
 
-#insert_different_tables()
+insert_different_tables()
 
 
-def read_aanbiedingen(con,cur, tup): # <= tup wordt item in winkelwagen: (id, aantal)
+def read_aanbiedingen(con,cur, recom_code):
     """
     Reads all data from table "collaborative_recommendations_combination" and returns these as a list.
 
         :return: a list with 4 product id's.
     """
+    recom_code = 6
     con = con
     cur = cur
-    sql = "SELECT * FROM collaborative_recommendations_combination WHERE recom_basis = 'aanbieding';"
-    cur.execute(sql)
+    cur.execute("SELECT * FROM collaborative_recommendations_combination;")
     records = cur.fetchall()
-
+    cur.close()
+    con.close()
     ids = str(records[0][1])
     split = ids.split(',')
-
     return split
 
-#read_aanbiedingen(con, cur, (0,0))
-#
-# #
-# con.commit()
-# print(datetime.datetime.now() - time0)  # <= prints how long the program took to run.
+
+con.commit()
+print(datetime.datetime.now() - time0)  # <= prints how long the program took to run.
