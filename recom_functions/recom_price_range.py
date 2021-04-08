@@ -17,7 +17,7 @@ def collect_pricerangefilter(productid,con,cur):
     cur.execute("SELECT sub_sub_category, selling_price FROM product WHERE id = '%s'"%(productid))
 
     sscat,price = cur.fetchall()[0]
-    price = 0
+    #price = 0
     pricerange = getpricerange(con,cur)
     whichrange = 0
     for prices in pricerange:
@@ -30,8 +30,12 @@ def collect_pricerangefilter(productid,con,cur):
             whichrange +=1
 
     sscat_pricerange = str(sscat) + '_' + str(pricerangeproduct)
-
+    print(sscat_pricerange)
     cur.execute("SELECT id FROM collaborative_recommendations_pricerange WHERE price_cat = '%s'"% sscat_pricerange)
     product_ids = cur.fetchall()
-    product_ids = product_ids[0][0].split(',')
+
+    if product_ids != []:
+        product_ids = product_ids[0][0].split(',')
+    else:
+        product_ids = None
     return product_ids
