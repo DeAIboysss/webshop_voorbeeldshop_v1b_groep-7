@@ -1,12 +1,8 @@
-# import datetime
-#
-# from recom_functions import connect
-
-
 def getpricerange(con,cur):
     '''
+    Determines what the priceclasses are per 10 percent of the products.
     :param con: connection with pgadmin used to commit
-    :param cur: cursor in pgadmin used to execute
+    :param cur: cursor in pgadmin used to execute sql
     :return: returns the ranges in tuples
     '''
     cur.execute('SELECT selling_price FROM product')
@@ -33,17 +29,27 @@ def getpricerange(con,cur):
         if i != 100//percent:
             rangelist.append(prices[(l//percent)*i])
     pricerange = []
-    # if rangelist[0] == 0:
-    #     rangelist[0] = 1
     for index in range(1,20,2):
         pricerange.append((rangelist[index-1],rangelist[index]))
     return pricerange
 
 def wipetablepricerange(con,cur):
+    '''
+    Creates empty table to insert filter data into.
+    :param con: connection with pgadmin used to commit
+    :param cur: cursor in pgadmin used to execute sql
+    '''
     cur.execute('DROP TABLE IF EXISTS collaborative_recommendations_pricerange; CREATE TABLE collaborative_recommendations_pricerange(price_cat varchar(255),id varchar(255))')
     con.commit()
 
 def getcatandpricedata(pricerange,con,cur):
+    '''
+    Gets data that will later be inserted into pgadmin filter table
+    :param pricerange: classes used to categorize products
+    :param con: connection with pgadmin used to commit
+    :param cur: cursor in pgadmin used to execute sql
+    :return: returns an array with tuples containing sub_sub_category combined with priceclass and products
+    '''
     cur.execute('SELECT sub_sub_category, selling_price, id FROM product')
     products = cur.fetchall()
     sscatdict = {}
@@ -79,26 +85,11 @@ def getcatandpricedata(pricerange,con,cur):
     return instertproof
 def insertpriceclass(datapriceclass,con,cur):
     """
-
-    :param datapriceclass:
-    :param con:
-    :param cur:
-    :return:
+    Inserts data into price class filter
+    :param datapriceclass: Array of tuples containing products and sub_sub_category combined with priceclass
+    :param con: connection with pgadmin used to commit
+    :param cur: cursor in pgadmin used to execute sql
     """
     cur.executemany('INSERT INTO collaborative_recommendations_pricerange VALUES(%s,%s);',datapriceclass)
     con.commit()
 
-# def main():
-#
-#     con,cur = connect.connection('opdracht2_final', 'kip12345')
-#     time0=datetime.datetime.now()
-#     wipetablepricerange(con,cur)
-#     pricerange = getpricerange(con,cur)
-#     datapriceclass = getcatandpricedata(pricerange,con,cur)
-#     insertpriceclass(datapriceclass,con,cur)
-#     print(datetime.datetime.now()-time0)
-#     cur.close()
-#     con.close()
-#
-# if __name__ == '__main__':
-#     main()

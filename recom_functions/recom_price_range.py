@@ -1,23 +1,15 @@
 from .create_recom_price_range import getpricerange
 
-
-def close(con,cur):
-    '''closes connection with database'''
-
-    cur.close()
-    con.close()
-
 def collect_pricerangefilter(productid,con,cur):
     '''
-    :param profileid: profile id
-    :param cur: cursor used to iterate over items in database
+    :param profileid: Current user, given by site.
+    :param cur: cursor in pgadmin used to execute sql
     :param con: connection to database
-    :return: product ids
+    :return: returns product ids collected from price range filter
     '''
     cur.execute("SELECT sub_sub_category, selling_price FROM product WHERE id = '%s'"%(productid))
 
     sscat,price = cur.fetchall()[0]
-    #price = 0
     pricerange = getpricerange(con,cur)
     whichrange = 0
     for prices in pricerange:

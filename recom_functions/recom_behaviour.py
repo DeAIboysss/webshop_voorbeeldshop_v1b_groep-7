@@ -1,4 +1,10 @@
 def collect_contentfilter(profileid,cur):
+    '''
+
+    :param profileid:
+    :param cur: cursor in pgadmin used to execute sql
+    :return: returns products from
+    '''
     cur = cur
     product_ids2 = []
     cur.execute("SELECT segment FROM profile WHERE profile_id = '%s'"%(profileid))
