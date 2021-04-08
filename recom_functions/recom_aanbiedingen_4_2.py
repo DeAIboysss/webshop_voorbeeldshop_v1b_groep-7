@@ -1,7 +1,15 @@
 def get_promo_products(tup:tuple,con,cur):
+    """
+    Takes in a list with a tuple containing product id's and the occurence of the product.
+    Checks if there is a product in the shopping cart and values if the promo-bundle is complete or not.
+
+        :param tup: a list with a tuple like [(product id, occurence)]
+        :param con: makes a connection to the database.
+        :param cur: makes it possible to call upon SQL methods.
+        :return: a list with 4 different product id's OR None.
+    """
     dict_aanbieding = {}
     for item in tup:
-        #print(item)
         cur.execute(f"select pd.sub_sub_category, pt.value from product as pd inner join properties as pt on pd.id = pt.productid where (pd.id = '{item[0]}' and pt.key = 'discount' )")
         record = cur.fetchall()
         cat = record[0][0]
@@ -28,12 +36,7 @@ def get_promo_products(tup:tuple,con,cur):
     return None
 
 
-
-#print(get_promo_products(tuples,con,cur))
-
-#time0 = datetime.datetime.now()
-
-def select_combinations(con,cur):
+def select_combinations():
     """
     Selects all distinct categories from the sub sub category column in table product.
 
@@ -58,9 +61,10 @@ def select_combinations(con,cur):
 #select_combinations()
 
 #======================================= CREATE TABLES:
-def create_new_table(con,cur):
+def create_new_table():
     """
-    Creates new tables for every different kind of recommendation if table does not already exist.
+    Creates a new table with a recom base column and product id column.
+
         :param table: A string that represents the name of the table.
         :return: None.
     """
@@ -71,9 +75,10 @@ def create_new_table(con,cur):
 #create_new_table()
 
 #======================================= SELECT AND INSERT DATA:
-def insert_into_tables(base_name, lst_recoms,con,cur):
+def insert_into_tables(base_name, lst_recoms):
     """
-    Inserts data from insert_different_tables and inserts it in the right columns etc.
+    Inserts data from insert_different_tables and inserts it in the right columns.
+
         :param base_name: name of the base on which a recommendation is made as a string.
         :param lst_recoms: list with product id's as a string.
     """
@@ -84,7 +89,7 @@ def insert_into_tables(base_name, lst_recoms,con,cur):
         cur.execute("INSERT INTO collaborative_recommendations_combination4_2 VALUES ('%s', '%s');" % (base_name, lst_recoms))
 
 
-def select_data_for_inserts(con,cur):
+def select_data_for_inserts():
     """
     Asks for the right data and inserts into table.
     """

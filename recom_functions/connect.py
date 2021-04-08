@@ -1,6 +1,6 @@
 import psycopg2
 
-def connection(database:str,ww:str):
+def connection(database:str="huwebshop",ww:str="admin"):
     con = psycopg2.connect(
         host="localhost",
         database=database,

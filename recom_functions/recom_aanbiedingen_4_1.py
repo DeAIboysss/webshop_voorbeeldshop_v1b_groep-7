@@ -1,15 +1,10 @@
-import datetime
 from .connect import connection
-
-# con, cur = connection("huwebshop", "admin")
-# time0 = datetime.datetime.now()
-
+con, cur = connection("huwebshop", "admin")
 #======================================= CREATE TABLES:
 def create_new_table(con,cur):
     """
-    Creates new tables for every different kind of recommendation if table does not already exist.
-        :param table: A string that represents the name of the table.
-        :return: None.
+    Creates a new table with products
+        :param table: A string that represents the name of the recom base.
     """
     cur.execute("""CREATE TABLE IF NOT EXISTS collaborative_recommendations_combination
                             (recom_basis VARCHAR, lst_product_id VARCHAR);""")
@@ -54,13 +49,14 @@ def insert_different_tables(con,cur):
 #insert_different_tables()
 
 
-def read_aanbiedingen(con,cur, recom_code):
+def read_aanbiedingen(con,cur):
     """
     Reads all data from table "collaborative_recommendations_combination" and returns these as a list.
 
+        :param con: makes a connection to the database.
+        :param cur: makes it possible to call upon SQL methods.
         :return: a list with 4 product id's.
     """
-    recom_code = 6
     con = con
     cur = cur
     cur.execute("SELECT * FROM collaborative_recommendations_combination;")
@@ -71,6 +67,4 @@ def read_aanbiedingen(con,cur, recom_code):
     split = ids.split(',')
     return split
 
-
 #con.commit()
-#print(datetime.datetime.now() - time0)  # <= prints how long the program took to run.
