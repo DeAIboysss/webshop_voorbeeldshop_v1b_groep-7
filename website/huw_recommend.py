@@ -22,7 +22,7 @@ from ..recom_functions.recom_personal import get_simmilar_profiles as recom_pers
 from ..recom_functions.recom_simple_popular import read_meest_verkocht as recom_simple
 from ..recom_functions.recom_behaviour import collect_contentfilter as recom_behaviour
 from ..recom_functions.recom_aanbiedingen_4_1 import read_aanbiedingen as recom_aanbieding
-from ..recom_functions.recom_aanbeidingen_4_2 import get_promo_products as recom_aanbieding2
+from ..recom_functions.recom_aanbiedingen_4_2 import get_promo_products as recom_aanbieding2
 from ..recom_functions.connect import connection
 from ..recom_functions.recom_price_range import collect_pricerangefilter as recom_similars
 import ast #for sepperation of shopping cart tuple

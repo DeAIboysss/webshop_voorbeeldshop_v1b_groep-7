@@ -5,7 +5,7 @@ from .connect import connection
 # time0 = datetime.datetime.now()
 
 #======================================= CREATE TABLES:
-def create_new_table(recom_basis):
+def create_new_table(con,cur):
     """
     Creates new tables for every different kind of recommendation if table does not already exist.
         :param table: A string that represents the name of the table.
@@ -18,7 +18,7 @@ def create_new_table(recom_basis):
 #create_new_table("aanbieding")
 
 #======================================= SELECT AND INSERT DATA:
-def insert_into_tables(base_name, lst_recoms):
+def insert_into_tables(base_name, lst_recoms,con,cur):
     """
     Inserts data from insert_different_tables and inserts it in the right columns etc.
         :param base_name: name of the base on which a recommendation is made as a string.
@@ -27,7 +27,7 @@ def insert_into_tables(base_name, lst_recoms):
     cur.execute("INSERT INTO collaborative_recommendations_combination VALUES ('%s', '%s');" % (base_name, lst_recoms))
 
 
-def insert_different_tables():
+def insert_different_tables(con,cur):
     """
     Asks for the right data and calls on insert function to put data in the right columns.
     """

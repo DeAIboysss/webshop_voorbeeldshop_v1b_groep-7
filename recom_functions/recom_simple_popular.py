@@ -24,7 +24,7 @@ def list_base_names(name):
 
 #======================================= CREATE TABLES:
 
-def create_new_table(recom_basis):
+def create_new_table(con,cur):
     """
     Creates new tables for every different kind of recommendation if table does not already exist.
 
@@ -50,7 +50,7 @@ def create_new_table(recom_basis):
 
 #======================================= SELECT AND INSERT DATA:
 
-def select_data(sql):
+def select_data(sql,con,cur):
     """
     Reads a query and returns the rows of the selected data.
 
@@ -63,7 +63,7 @@ def select_data(sql):
     return records
 
 
-def insert_into_tables(base_name, lst_recoms):
+def insert_into_tables(base_name, lst_recoms,con,cur):
     """
     Inserts data from insert_different_tables and inserts it in the right columns etc.
 
@@ -76,7 +76,7 @@ def insert_into_tables(base_name, lst_recoms):
     cur.execute("INSERT INTO collaborative_recommendations_popular VALUES ('%s', '%s');" % (base_name, lst_recoms))
 
 
-def insert_different_tables():
+def insert_different_tables(con,cur):
     """
     Asks for the right data and calls on insert function to put data in the right columns.
     """
