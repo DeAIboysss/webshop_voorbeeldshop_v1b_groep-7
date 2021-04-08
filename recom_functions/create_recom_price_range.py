@@ -1,5 +1,3 @@
-from recom_functions.connect import connection as connect
-import datetime
 def getpricerange(con,cur):
     '''
     :param con: connection with pgadmin used to commit
@@ -80,19 +78,3 @@ def insertpriceclass(datapriceclass,con,cur):
     """
     cur.executemany('INSERT INTO collaborative_recommendations_pricerange VALUES(%s,%s);',datapriceclass)
     con.commit()
-
-def main():
-
-    con,cur = connect('opdracht2_final', 'kip12345')
-    time0=datetime.datetime.now()
-    wipetablepricerange(con,cur)
-    pricerange = getpricerange(con,cur)
-    print(pricerange)
-    datapriceclass = getcatandpricedata(pricerange,con,cur)
-    insertpriceclass(datapriceclass,con,cur)
-    print(datetime.datetime.now()-time0)
-    cur.close()
-    con.close()
-
-if __name__ == '__main__':
-    main()

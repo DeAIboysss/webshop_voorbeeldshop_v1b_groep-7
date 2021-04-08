@@ -1,13 +1,3 @@
-from pymongo import MongoClient
-import psycopg2
-from random import randint
-import datetime
-from recom_functions.connect import connection
-
-
-con, cur = connection('opdracht2_final', 'kip12345')
-tuples = [('1651',1),('23798', 1), ('22184', 3), ('25960', 2), ('4744', 2)] # <= test data met sscategory: None ,Haarstyling, Afwasmiddel, Nagellakremovers
-#tuples = [('1651',1),('38815',1),('1453',1),('16034',1)]
 def get_promo_products(tup:tuple,con,cur):
     dict_aanbieding = {}
     for item in tup:
@@ -39,9 +29,9 @@ def get_promo_products(tup:tuple,con,cur):
 
 
 
-print(get_promo_products(tuples,con,cur))
+#print(get_promo_products(tuples,con,cur))
 
-time0 = datetime.datetime.now()
+#time0 = datetime.datetime.now()
 
 def select_combinations():
     """
@@ -120,5 +110,3 @@ def select_data_for_inserts():
                 joined = ','.join(recoms)
             insert_into_tables(str(i), joined)
 
-# select_data_for_inserts()
-# con.commit()

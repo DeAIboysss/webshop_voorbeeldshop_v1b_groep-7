@@ -1,8 +1,8 @@
 import datetime
-from connect import connection
+from .connect import connection
 
-con, cur = connection("huwebshop", "admin")
-time0 = datetime.datetime.now()
+# con, cur = connection("huwebshop", "admin")
+# time0 = datetime.datetime.now()
 
 #======================================= CREATE TABLES:
 def create_new_table(recom_basis):
@@ -15,7 +15,7 @@ def create_new_table(recom_basis):
                             (recom_basis VARCHAR, lst_product_id VARCHAR);""")
     con.commit()
 
-create_new_table("aanbieding")
+#create_new_table("aanbieding")
 
 #======================================= SELECT AND INSERT DATA:
 def insert_into_tables(base_name, lst_recoms):
@@ -51,7 +51,7 @@ def insert_different_tables():
 
     insert_into_tables("aanbieding", joined)
 
-insert_different_tables()
+#insert_different_tables()
 
 
 def read_aanbiedingen(con,cur, recom_code):
@@ -72,5 +72,5 @@ def read_aanbiedingen(con,cur, recom_code):
     return split
 
 
-con.commit()
-print(datetime.datetime.now() - time0)  # <= prints how long the program took to run.
+#con.commit()
+#print(datetime.datetime.now() - time0)  # <= prints how long the program took to run.

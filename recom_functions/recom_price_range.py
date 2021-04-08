@@ -1,9 +1,4 @@
-from pymongo import MongoClient
-import psycopg2
-from random import randint
-import datetime
-from recom_functions import connect
-from recom_functions.create_recom_price_range import getpricerange
+from .create_recom_price_range import getpricerange
 
 
 def close(con,cur):
@@ -19,7 +14,7 @@ def collect_pricerangefilter(productid,con,cur):
     :param con: connection to database
     :return: product ids
     '''
-    cur.execute('SELECT sub_sub_category, selling_price FROM product WHERE id = %s'%(productid))
+    cur.execute("SELECT sub_sub_category, selling_price FROM product WHERE id = '%s'"%(productid))
 
     sscat,price = cur.fetchall()[0]
     price = 0
@@ -40,16 +35,3 @@ def collect_pricerangefilter(productid,con,cur):
     product_ids = cur.fetchall()
     product_ids = product_ids[0][0].split(',')
     return product_ids
-
-def main():
-    '''driver code'''
-    time0 = datetime.datetime.now()
-    con,cur =connect.connection()
-    collect_pricerangefilter('01096',con,cur)
-
-    close(con,cur)
-    print(datetime.datetime.now()-time0)
-
-
-if __name__ == '__main__':
-    main()
