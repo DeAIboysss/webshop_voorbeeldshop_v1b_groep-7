@@ -139,7 +139,7 @@ def collaborativefilter(nieuwesegments:bool,con,cur):
 def main():
     '''driver code'''
     time0 = datetime.datetime.now()
-    con,cur =connect('opdracht2_final', 'kip12345')
+    con,cur =connect('huwebshop', 'admin')
     #contentfilter(True)
     collaborativefilter(False,con,cur)
     close(con,cur)

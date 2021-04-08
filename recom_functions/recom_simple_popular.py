@@ -1,10 +1,4 @@
-import datetime
-import psycopg2
-
-time0 = datetime.datetime.now()
 content = ['category', 'sub_category', 'sub_sub_category', 'properties']
-
-
 
 def list_base_names(name):
     """
@@ -13,7 +7,6 @@ def list_base_names(name):
         :param name: The name of a table.
         :return: A list with all the columns for said table.
     """
-
     if name == 'sub_sub_category':
         return ['Pijnstillers', 'Multivitaminen', 'Shampoo', 'Kat', 'Toiletpapier_en_vochtige_doekjes', 'Elektronica_accessoires', 'Condooms', 'Batterijen', 'Kunstgebitverzorging', 'Wasverzachter', 'Tandenstokers_floss_en_ragers', 'Meubels', 'Overige_dierverzorging', 'Haaraccessoires', 'Lenzenvloeistof', 'Feestartikelen', 'Wattenschijfjes_en_wattenstaafjes', 'Reisziekte', 'Textielverf', 'Pleisters', 'Accessoires', 'Zwangerschap', 'Gewrichten', 'Oogschaduw', 'Reiniging_vaatwasser', 'Nagellakremovers', 'Schoenen_slippers_en_sloffen', 'Voetschimmel', 'Foundation_en_concealer', 'Blush', 'Media', 'Scheerschuim_en_scheergel', 'Kinderkleding', 'Geschenksets', 'Zwangerschapsvitamines', 'Homeopathisch', 'Overige_huishoudelijke_artikelen', 'Mondverfrissers', 'Bad_en_douche', 'Kaarsen', 'Huishoudelijke_apparaten', 'Voetdeodorant', 'Aftershave', 'Babyhaartjes_bad_en_douche', 'Afwasmiddel', 'Kaarten', 'Poeder', 'Carnaval', 'Keukenpapier', 'Nagellak', 'Mondwater_en_spray', 'Sieraden_en_bijoux', 'Make_up_remover_en_reiniging', 'Bandages_en_windsels', 'Dames_nachtmode', 'Vlekkenverwijderaars', 'Onzuivere_huid_en_acne', 'Zwemluiers', 'Koffie', 'Deodorant', 'Tampons', 'Overige_voedingssuplementen', 'Haarkuur_en_haarmasker', 'Kappersproducten', 'Schoonmaken', 'Muziek', 'Knutselen_en_hobby', 'Glijmiddelen_en_seksspeeltjes', 'Kerst', 'Kantoor_benodigdheden', 'Dames_brillen', 'Oor_en_mond', 'Chips', 'Anti_lekbekers', 'Speelgoed', 'Herengeuren', 'Bordspellen', 'Highlighters_en_bronzers', 'Toiletblokken', 'Luchtwegen_en_verkoudheid', 'Weerstand', 'Enkelvoudige_vitaminen', 'Damesgeuren', 'Sportverzorging', 'Lipliner', 'Dames_kleding', 'Dvd_en_Blue_ray', 'Luierbroekjes_en_pyjamabroekjes', 'Tissues_en_zakdoekjes', 'Lipverzorging', 'Botten', 'Overige_elektronika', 'Watten', 'Heren_nachtmode', 'Scheermesjes', 'Make_up_accessoires', 'Lenzen', 'Maaltijdvervangers', 'Blaas', 'Baby_accessoires', 'Sportdranken', 'Sportvoeding', 'EHBO', 'Oogcreme_en_serum', 'Cartridges', 'Mini_tandpasta', 'Ontspanning_en_rust', 'Babydoekjes', 'Kunstnagels', 'Foto_en_film', 'Gezichtsmasker_man', 'Spierwrijfmiddelen', 'Man', 'Boeken', 'Baby_speelgoed', 'Flesvoeding', 'Lampen', 'Insectenbestrijding', 'Babykleding', 'Mineralen', 'Haarserum', 'Keuken_artikelen', 'Baby_en_kinderaccessoires', 'Luizen', 'Tandpasta', 'Heren_brillen', 'Verzorgende_voetcremes', 'Dames_ondergoed', 'Mascara', 'Kinderbestek', 'Flessen_en_flessenspenen', 'Reiniging', 'Eelt_en_harde_huid', 'Supplementen', 'Dames_accessoires', 'Ontharingscreme_wax_en_hars', 'Pasen', 'Vaatwastabletten', 'Outdoor_en_vrije_tijd', 'Natuurlijke_gezondheid', 'Beeld_en_geluid', 'Fopspenen', 'Handcremes', 'Tablets_en_computers', 'Huidverzorging_en_koortslip', 'Koffers', 'Nachtcreme', 'Vakantie', 'Leesbrillen', 'Maandverband', 'Mini_scheerschuim_en_scheergel', 'Inlegkruisjes', 'Intiemverzorging', 'Vaginale_schimmel', 'Wratten', 'Tuinartikelen', 'Mini_bad_en_douche', 'Tassen', 'Mama_verzorging', 'Voetverzorging', 'Hond', 'Verlichting', 'Vibrators_en_dildos', 'Uiterlijk', 'Creme', 'Wenkbrauwproducten', 'Haarstyling', 'Wasmiddel', 'Oordoppen', 'Handzeep_en_handgel', 'Lipgloss', 'Kalknagels', 'Energie', 'Snacks_en_snoep', 'Stoppen_met_roken', 'Incontinentie', 'Mini_olie_en_lotion', 'Heren_ondergoed', 'Wondontsmetting', 'Kind', 'Luiers', 'Gezichtsmasker', 'Thee', 'Zonnebrand_en_aftersun', 'Lipstick', 'Energy_drank', 'Zwangerschapstest_en_ovulatietest', 'Telefonie', 'Woonaccessoires', 'Heren_accessoires', 'Aambeien', 'Scheren', 'Dagcreme', 'Mini_shampoo_en_conditioner', 'Haarkleuring', 'Overige_dranken', 'Wondverzorging', 'Allergieen', 'Bodylotion_en_bodymilk', 'Hart_en_visolie', 'Toilettassen', 'Elektrische_tandenborstels', 'Toiletreinigers', 'Halloween', 'Huishoudelijk_textiel', 'Tandenborstels', 'Panties_en_sokken', 'Luchtverfrissers', 'Valentijn', 'Sportartikelen', 'Conditioner', 'Mini_deodorant_en_geuren', 'Persoonlijke_verzorging', 'Sokken', 'Baby_huidverzorging', 'Scheerapparaten', 'Patty_Brard_Collectie', 'Spijsvertering', 'Mini_haarstyling', 'Reiniging_man']
     elif name == 'personality_type':
@@ -23,18 +16,13 @@ def list_base_names(name):
 
 
 #======================================= CREATE TABLES:
-
 def create_new_table(recom_basis):
     """
     Creates new tables for every different kind of recommendation if table does not already exist.
 
-        :param table: A string that represents the name of the table.
+        :param recom_basis: A string that represents the name of the table.
         :return: None.
     """
-
-    '''DELETE ALL recom TABLES:'''
-    #cur.execute("DROP TABLE IF EXISTS collaborative_recommendations;")
-
 
     cur.execute("""CREATE TABLE IF NOT EXISTS collaborative_recommendations_popular
                             (recom_basis VARCHAR,lst_product_id VARCHAR);""")
@@ -47,9 +35,7 @@ def create_new_table(recom_basis):
 #      create_new_table(j)
 
 
-
 #======================================= SELECT AND INSERT DATA:
-
 def select_data(sql):
     """
     Reads a query and returns the rows of the selected data.
@@ -101,11 +87,12 @@ def insert_different_tables():
     insert_into_tables('meest_verkocht', joined)
 
 
-
 def read_meest_verkocht(con,cur):
     """
+    Selects the most ordered products from the database.
 
-        :return:
+        :param con: makes a connection to the database.
+        :param cur: makes it possible to call upon SQL methods.
     """
     con = con
     cur = cur
@@ -116,9 +103,3 @@ def read_meest_verkocht(con,cur):
     ids = str(records[0][1])
     split = ids.split(',')
     return split
-
-#con.commit()
-# cur.close()
-# con.close()
-
-print(datetime.datetime.now() - time0)   # <= prints how long the program took to run.
