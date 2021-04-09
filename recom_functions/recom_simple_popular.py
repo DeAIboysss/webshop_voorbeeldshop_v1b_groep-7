@@ -23,7 +23,7 @@ def insert_into_tables(base_name, lst_recoms):
         :param base_name: name of the base on which a recommendation is made as a string.
         :param lst_recoms: list with product id's as a string.
     """
-    cur.execute("INSERT INTO collaborative_recommendations_popular_test VALUES ('%s', '%s');" % (base_name, lst_recoms))
+    cur.execute("INSERT INTO collaborative_recommendations_popular VALUES ('%s', '%s');" % (base_name, lst_recoms))
 
 
 def insert_different_tables():
@@ -55,7 +55,7 @@ def read_meest_verkocht(con,cur):
         :param con: makes a connection to the database.
         :param cur: makes it possible to call upon SQL methods.
     """
-    cur.execute("SELECT * FROM collaborative_recommendations_popular_test WHERE recom_basis = 'meest_verkocht'")
+    cur.execute("SELECT * FROM collaborative_recommendations_popular WHERE recom_basis = 'meest_verkocht'")
     records = cur.fetchall()
     ids = str(records[0][1])
     split = ids.split(',')
